@@ -24,41 +24,31 @@ header {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 15px;
-    padding-top: 10px;
 }
 
-nav {
+header table {
     background: transparent; /* sem cor de fundo */
-    padding: 15px 0;
-    text-align: center;
+    padding: 7px 0;
+    width: 100%;
+    text-align: end;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+header table img{
+  display: flex;
 }
 
-nav ul li {
-    display: inline-block;
-    margin: 0 15px;
-    position: relative;
-    font-weight: bold;
-}
-
-nav a {
+header table a {
   padding: 8px 16px;
   border-radius: 5px;
   text-decoration: none;
 }
 
-nav a:hover {
+header table a:hover {
     background-color: #101386;
 }
 
 #h1Login {
-    font-size: 3.5rem;
+    font-size: 2.7rem;
     margin: 30px auto;
     text-align: center;
 }

@@ -102,6 +102,30 @@ app.get("/pagInicialADM", (req, res) => {
   }
 })
 
+app.get("/selectCampanha", (req, res) => {
+  if (req.session.loggedin) {
+    console.log("GET /selectCampanha");
+    const query =
+      "SELECT * From Campanhas";
+      
+    db.all(query, [], (err, row) => {
+      if (err) throw err;
+
+        console.log("Campanhas: ", JSON.stringify(row));
+        console.log("Req: ", req.session);
+        res.render("pages/selectCampanha", {
+          titulo: "Selecionar Campanha",
+          dados: row,
+          req: req,
+        });
+      
+    });
+  } else {
+    tituloError = "Não Autorizado";
+    res.redirect("/nao-autorizado");
+  }
+});
+
 app.get("/tabGeral/:pag", (req, res) => {
   if (req.session.loggedin) {
     console.log("GET /");
