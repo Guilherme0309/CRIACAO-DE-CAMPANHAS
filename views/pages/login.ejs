@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head") %>
+
+<body>
+    <br><br>    
+    <center>
+        <img src="../../static/Logo.png" width="400px">
+        <h1 id="h1Login">LOGIN</h1>
+        <main>
+            <form action="/login" method="post" class="formItens">
+        <table id="tblLogin">
+            <tr>
+                <td>
+                    Login:
+                </td>
+                <td>
+                    <input type="text" name="username" id="username" placeholder="Digite seu nome de usuário">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Senha:
+                </td>
+                <td>
+                    <input type="password" name="password" id="password" placeholder="Digite sua senha">
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <button type="submit" id="btnEntrar" style="margin-bottom: 20px;">ENTRAR</button>
+            </form>
+        </main>
+    </center>
+
+    <%- include("../partials/footer") %>
+</body>
+
+</html>
