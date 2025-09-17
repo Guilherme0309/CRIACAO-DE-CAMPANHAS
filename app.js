@@ -126,6 +126,40 @@ app.get("/selectCampanha", (req, res) => {
   }
 });
 
+app.get("/novaCampanha", (req, res) => {
+  if (req.session.adm) {
+    console.log("GET /novaCampanha");
+    const query = "SELECT * FROM Turmas Where ativo = '1' ";
+
+    // Primeiro obtemos os dados de ambas as tabelas
+    db.all(query, [], (err, turmas) => {
+      if (err) throw err;
+        // Só renderizamos a página quando temos todos os dados
+        res.render("pages/novaCampanha", {
+          titulo: "Nova Campanha",
+          req: req,
+          turmas: turmas,
+        });
+      });
+  } else {
+    tituloError = "Não Autorizado";
+    res.redirect("/nao-autorizado");
+  }
+})
+
+app.post("/novaCampanha", (req, res) => {
+  console.log("POST /novaCampanha");
+  // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
+  //req.session.username, req.session.id
+  if (req.session.adm) {
+    console.log(JSON.stringify(req.body));
+    res.redirect("/novaCampanha");
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
 app.get("/tabGeral/:pag", (req, res) => {
   if (req.session.loggedin) {
     console.log("GET /");

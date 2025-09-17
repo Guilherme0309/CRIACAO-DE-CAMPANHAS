@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head") %>
+
+<body>
+    <%- include("../partials/menu") %>
+    <br><br>
+    <center><h1>NOVA CAMPANHA</h1></center>
+    <br><br>
+    <main>
+        <center>
+            <form action="/novaCampanha" method="post" class="formItens">
+            <table id="tblLogin">
+                <tr>
+                    <td>
+                        Nome Campanha:
+                    </td>
+                    <td>
+                        <input type="text" name="campanhaname" id="campanhaname" placeholder="Digite o nome da Campanha">
+                    </td>
+                </tr>
+                <tr>
+                    <td><br></td>
+                    <td><br></td>
+                </tr>
+                <tr>
+                    <td style=" text-align: left;">
+                        Turmas:
+                    </td>
+                    <td>
+                        <div id="CheckedList" style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
+                            <% turmas.forEach(turma => { %>
+                                <input type="checkbox" name="Turmas" value="<%= turma.id_turma %>" class="turma" checked="true">
+                                <label><%= turma.sigla %> - [<%= turma.docente %>]</label>
+                                <br>
+                            <% }) %>
+                        </div>
+                           
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <br>
+            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">CRIAR</button>
+                </form>
+            </main>
+        </center>
+        </center>
+    </main>
+
+    <%- include("../partials/footer") %>
+</body>
+
+</html>

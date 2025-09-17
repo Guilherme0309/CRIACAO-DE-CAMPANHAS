@@ -7,21 +7,24 @@
     <%- include("../partials/menu") %>
     <% console.log ('Dados: ' + dados)%>
     <center><h1>SELECIONAR CAMPANHA</h1></center>
-
+    <br><br>
     <main>
+        <center>
         <% if (!dados || dados.length === 0)  {%>
             Nenhuma Campanha Criada
         <% } else {%>
                 <select name="qtd" id="qtd" style="width: 200px;">
                     <option value="">[Escolha]</option>
-                    <% let i = 0; for (i=0; i< dados.length; i++) {%>
-                        <option value="<%= z %>"><%= z %></option>
-                    <% } %>
+                    <% dados.forEach(dado => { %>
+                        <option value="<%= dado %>"><%= dado %></option>
+                    <% }) %>
                 </select>
             <% } %>
+            <br><br>
         <% if (req.session.adm){ %>
             <a href="/novaCampanha"><button>CRIAR NOVA CAMPANHA</button></a>
-        <% } %>
+        <% } %>  
+        </center>
     </main>
 
     <%- include("../partials/footer") %>
