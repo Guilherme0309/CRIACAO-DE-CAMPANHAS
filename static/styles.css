@@ -164,3 +164,17 @@ table tfoot a:hover {
   background-color: #112553;
 }
 }
+
+#listaTarefas{
+  li {
+    background: #ea4921;
+    color: white;
+    padding: 15px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    max-width: 550px;
+}}

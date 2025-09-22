@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <%- include("../partials/head") %>
 
 <body>
     <%- include("../partials/menu") %>
-    <br><br>
+    <a href="/selectCampanha"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
     <center><h1>NOVA CAMPANHA</h1></center>
     <br><br>
     <main>
         <center>
-            <form action="/novaCampanha" method="post" class="formItens">
+            <form action="/novaCampanha" method="post" class="formItens"
+            onsubmit="
+            const id_turmas = document.getElementById('selectTurmas').value;
+            const nome_campanha = document.getElementById('campanhaname').value;
+        
+        if (!id_turmas || !nome_campanha) {
+          alert('Preencha Todos os Campos para Postar a Campanha!');
+          return false;
+        }
+        return confirm('Tem Certeza Que Deseja Adicionar uma Campanha?');" >
             <table id="tblLogin">
                 <tr>
                     <td>
-                        Nome Campanha:
+                        <b>Nome Campanha:</b>
                     </td>
                     <td>
                         <input type="text" name="campanhaname" id="campanhaname" placeholder="Digite o nome da Campanha">
@@ -26,7 +37,7 @@
                 </tr>
                 <tr>
                     <td style=" text-align: left;">
-                        Turmas:
+                        <b>Turmas:</b>
                     </td>
                     <td>
                         <div id="CheckedList" style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
@@ -36,10 +47,42 @@
                                 <br>
                             <% }) %>
                         </div>
-                           
+                    </td>
+                </tr>
+                <tr>
+                    <td style=" text-align: left;">
+                        <br>
+                        <b>Adicionar Itens:</b>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style=" text-align: left;">
+                        <br>
+                        Descrição Item: 
+                    </td>
+                    <td>
+                        <input type="text" id="itemName" placeholder="Digite a Desc. do Item">
+                    </td>
+                </tr>
+                <tr>
+                    <td style=" text-align: left;">
+                        Pontos:
+                    </td>
+                    <td>
+                        <br>
+                        <select name="pontos" id="pontos" style="width: 200px;">
+                            <option value="">[Escolha]</option>
+                            <% let x = 1; for (x = 1 ; x< 100; x++) {%>
+                                <option value="<%= x %>"><%= x %></option>
+                            <% } %>
+                          </select>
                     </td>
                 </tr>
             </table>
+            <button id="addTask" type="button">ADICIONAR ITEM</button>
+            <ul id="listaTarefas" name="itensName">
+            </ul>
             <br>
             <br>
             <button type="submit" id="btnCriar" style="margin-bottom: 20px;">CRIAR</button>
@@ -48,6 +91,52 @@
         </center>
         </center>
     </main>
+
+    <script>
+        const tarefaInput = document.getElementById("itemName");
+        const listaTarefas = document.getElementById("listaTarefas");
+        const btnTarefas = document.getElementById("addTask");
+        const btnRemover = document.getElementById("removeTesk")
+        
+        function AddTarefa(){
+        
+            const TextTask = tarefaInput.value.trim();
+        
+            if (TextTask === ""){
+                alert("Por favor, digite uma tarefa!");
+                return;
+            }
+        
+            const li = document.createElement("li");
+            li.textContent = TextTask;
+            
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "X";
+            deleteBtn.classList.add("delete-btn");
+        
+            li.addEventListener("click", () => {
+                li.classList.toggle("completed");
+            });
+        
+            deleteBtn.addEventListener("click", (event) => {
+                event.stopPropagation(); 
+                listaTarefas.removeChild(li);
+            });
+        
+            li.appendChild(deleteBtn);
+            listaTarefas.appendChild(li);
+        
+            tarefaInput.value = "";
+        }
+        
+        btnTarefas.addEventListener ("click", AddTarefa);
+        
+        tarefaInput.addEventListener("keypress", (event) =>{
+            if (event.key === "Enter"){
+                AddTarefa();
+            }
+        })
+                    </script>
 
     <%- include("../partials/footer") %>
 </body>
