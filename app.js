@@ -1,18 +1,18 @@
-//AO INICIAR UM ARQUIVO JS SEMPRE DECLARE UMA VARIAVEL DE SUA BIBLIOTECA
-const express = require("express");
-const session = require("express-session");
-const sqlite3 = require("sqlite3");
-// const bodyparser = require("body-parser") //Até a versão 4 é necessario usar esse codigo
+// Importação de bibliotecas necessárias
+const express = require("express"); // Framework para servidor web
+const session = require("express-session"); // Controle de sessão (login, autenticação)
+const sqlite3 = require("sqlite3"); // Banco de dados SQLite
 
-const app = express(); //Armazena as chamadas e propriedades da biblioteca EXPRESS
 
-const PORT = 8000;
+const app = express(); // Criação da aplicação Express
+const PORT = 8000; // Porta do servidor
 
-//Conexão com o Banco de Dados
-const db = new sqlite3.Database("dataBase.db");
+// ==================== BANCO DE DADOS ====================
+const db = new sqlite3.Database("dataBase.db"); // Conexão com o banco
 db.serialize(() => {
+  // Criação das tabelas, caso não existam
   db.run(
-    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT,cpf INTEGER(11), password TEXT, ativo INTEGER, tipo_perfil TEXT(3))"
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, cpf INTEGER(11), password TEXT, ativo INTEGER, tipo_perfil TEXT(3))"
   );
   db.run(
     "CREATE TABLE IF NOT EXISTS Itens_Pontuacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, Descricao TEXT, Pontos INTEGER, id_Campanha INTEGER, Ativo INTEGER)"
@@ -31,31 +31,40 @@ db.serialize(() => {
   );
 });
 
+// ==================== CONFIGURAÇÕES DO EXPRESS ====================
+
+// Configuração da sessão
 app.use(
   session({
-    secret: "senhaforte",
-    resave: true,
-    saveUninitialized: true,
+    secret: "senhaforte", // Chave secreta para assinar sessão
+    resave: true, // Salvar sessão mesmo que não alterada
+    saveUninitialized: true, // Criar sessão mesmo sem dados
   })
 );
 
+// Pasta de arquivos estáticos (CSS, JS, imagens)
 app.use("/static", express.static(__dirname + "/static"));
 
-//Configuração do Express para processar requisições POST com BODY PARAMETERS
-app.use(express.urlencoded({ extended: true })); // Versão Express >= 5.x.x
+// Configuração para receber dados de formulários (POST)
+app.use(express.urlencoded({ extended: true })); // Express >= 5
 
+// Motor de templates (EJS)
 app.set("view engine", "ejs");
 
+// ==================== ROTAS PRINCIPAIS ====================
+
+// Rota inicial → redireciona para login
 app.get("/", (req, res) => {
   res.redirect("/login");
 });
 
+// Página de login (formulário)
 app.get("/login", (req, res) => {
   console.log("GET /login");
   res.render("pages/login", { titulo: "Login" });
 });
 
-//Rota /login para processamento dos dados do formulário de LOGIN no cliente
+// Processamento do login
 app.post("/login", (req, res) => {
   console.log("POST /login");
   console.log(JSON.stringify(req.body));
@@ -63,16 +72,18 @@ app.post("/login", (req, res) => {
 
   const query = `SELECT * FROM users WHERE username=? AND password=?`;
 
+  // Busca usuário no banco
   db.get(query, [username, password], (err, row) => {
-    if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+    if (err) throw err;
 
-    //1. Verificar se o usuário existe
     console.log(JSON.stringify(row));
     if (row) {
-      //2. Se o usuário existir e a senha é válida no BD, executar o processo de login
+      // Usuário encontrado → cria sessão
       req.session.username = username;
       req.session.loggedin = true;
       req.session.id_username = row.id;
+
+      // Se for admin → vai para página de admin
       if (row.tipo_perfil == "ADM") {
         req.session.adm = true;
         res.redirect("/pagInicialADM");
@@ -81,104 +92,93 @@ app.post("/login", (req, res) => {
         res.redirect("/tabGeral/1");
       }
     } else {
-      //3. Se não, executar processo de negação de login
+      // Usuário ou senha inválidos
       res.redirect("/user-senha-invalido");
     }
   });
-  // res.render("pages/login")
 });
 
+// Página para login inválido
 app.get("/user-senha-invalido", (req, res) => {
   res.render("pages/user-senha-invalido", {
     titulo: "Usuario Senha Invalidos",
   });
 });
 
+// Página inicial do admin
 app.get("/pagInicialADM", (req, res) => {
   if (req.session.adm) {
     console.log("GET /pagInicialADM");
-    res.render("pages/pagInicialADM", {titulo: "Página Inicial ADMIN", req: req});
-      
+    res.render("pages/pagInicialADM", { titulo: "Página Inicial ADMIN", req: req });
   } else {
-    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
-})
+});
 
+// Seleção de campanhas (usuários logados)
 app.get("/selectCampanha", (req, res) => {
   if (req.session.loggedin) {
     console.log("GET /selectCampanha");
-    const query =
-      "SELECT * From Campanhas";
-      
+    const query = "SELECT * From Campanhas";
+
     db.all(query, [], (err, row) => {
       if (err) throw err;
 
-        console.log("Campanhas: ", JSON.stringify(row));
-        console.log("Req: ", req.session);
-        res.render("pages/selectCampanha", {
-          titulo: "Selecionar Campanha",
-          dados: row,
-          req: req,
-        });
-      
+      res.render("pages/selectCampanha", {
+        titulo: "Selecionar Campanha",
+        dados: row,
+        req: req,
+      });
     });
   } else {
-    tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
   }
 });
 
+// Criar nova campanha (admin)
 app.get("/novaCampanha", (req, res) => {
   if (req.session.adm) {
     console.log("GET /novaCampanha");
     const query = "SELECT * FROM Turmas Where ativo = '1' ";
 
-    // Primeiro obtemos os dados de ambas as tabelas
     db.all(query, [], (err, turmas) => {
       if (err) throw err;
-        // Só renderizamos a página quando temos todos os dados
-        res.render("pages/novaCampanha", {
-          titulo: "Nova Campanha",
-          req: req,
-          turmas: turmas,
-        });
+      res.render("pages/novaCampanha", {
+        titulo: "Nova Campanha",
+        req: req,
+        turmas: turmas,
       });
+    });
   } else {
-    tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
   }
-})
+});
 
+// Processar criação de campanha (ainda não salva no banco)
 app.post("/novaCampanha", (req, res) => {
   console.log("POST /novaCampanha");
-  // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
-  //req.session.username, req.session.id
   if (req.session.adm) {
     console.log(JSON.stringify(req.body));
     res.redirect("/novaCampanha");
   } else {
-    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
 });
 
+// Ranking geral de turmas
 app.get("/tabGeral/:pag", (req, res) => {
   if (req.session.loggedin) {
     console.log("GET /");
     const pag = req.params.pag;
+
     const query =
-      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente,Sum(Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS totalPontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id GROUP BY Turmas.id_turma ORDER BY totalPontos DESC";
+      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente, Sum(Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS totalPontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id GROUP BY Turmas.id_turma ORDER BY totalPontos DESC";
     const query2 = "SELECT * from Turmas";
 
     db.all(query, [], (err, row1) => {
       if (err) throw err;
-
       db.all(query2, [], (err, row2) => {
         if (err) throw err;
-
-        console.log("DADOS: ", JSON.stringify(row1));
-        console.log("TURMAS: ", JSON.stringify(row2));
         res.render("pages/index", {
           titulo: "Arrecadações",
           dados: row1,
@@ -189,27 +189,29 @@ app.get("/tabGeral/:pag", (req, res) => {
       });
     });
   } else {
-    tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
   }
 });
 
+// Listagem de arrecadações
 app.get("/arrecadacoes/:pag", (req, res) => {
   if (req.session.loggedin) {
     console.log("GET /arrecadacoes");
     const pag = req.params.pag;
     const orderBy = req.query.orderBy;
-    console.log(orderBy);
     let query =
       "SELECT id_arrecadacao, Turmas.sigla, Pontuacao_Roupas.Descricao, Pontuacao_Roupas.Pontos, qtd, data FROM Arrecadacoes INNER JOIN Turmas ON Arrecadacoes.id_turma = Turmas.id_turma INNER JOIN Pontuacao_Roupas ON Arrecadacoes.id_roupa = Pontuacao_Roupas.id ORDER BY ";
-    if (orderBy == "data"){
+
+    // Ordenação dinâmica
+    if (orderBy == "data") {
       query += " Arrecadacoes.id_arrecadacao DESC";
-    } else if (orderBy == "sala"){
+    } else if (orderBy == "sala") {
       query += " Arrecadacoes.id_turma";
     } else {
       query += " Arrecadacoes.id_turma";
     }
-      db.all(query, [], (err, row) => {
+
+    db.all(query, [], (err, row) => {
       if (err) throw err;
       res.render("pages/arrecadacoes", {
         titulo: "Arrecadações",
@@ -220,25 +222,21 @@ app.get("/arrecadacoes/:pag", (req, res) => {
       });
     });
   } else {
-    tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
   }
 });
 
+// Formulário de nova doação (apenas admin)
 app.get("/nova-doacao", (req, res) => {
   if (req.session.adm) {
     console.log("GET /nova-doacao");
     const query = "SELECT * FROM Turmas";
     const query2 = "SELECT * FROM Pontuacao_Roupas";
 
-    // Primeiro obtemos os dados de ambas as tabelas
     db.all(query, [], (err, turmas) => {
       if (err) throw err;
-
       db.all(query2, [], (err, pontuacoes) => {
         if (err) throw err;
-
-        // Só renderizamos a página quando temos todos os dados
         res.render("pages/nova-doacao", {
           titulo: "Nova Doação",
           req: req,
@@ -248,35 +246,32 @@ app.get("/nova-doacao", (req, res) => {
       });
     });
   } else {
-    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
 });
 
+// Processar nova doação
 app.post("/nova-doacao", (req, res) => {
   console.log("POST /nova-doacao");
-  // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
-  //req.session.username, req.session.id
   if (req.session.adm) {
     const { id_turma, id_roupa, qtd } = req.body;
     const query = `INSERT INTO Arrecadacoes (id_turma, id_roupa, qtd, data) VALUES (?, ? , ?, ?)`;
     const data = new Date();
     const data_atual = data.toLocaleDateString();
+
     console.log(JSON.stringify(req.body));
     console.log(JSON.stringify(data_atual));
 
     db.get(query, [id_turma, id_roupa, qtd, data_atual], (err, row) => {
-      if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
-      //1. Verificar se o usuário existe
-      console.log(JSON.stringify(row));
+      if (err) throw err;
       res.redirect("/nova-doacao");
     });
   } else {
-    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
 });
 
+// Detalhes de uma turma
 app.get("/dadosDaTurma/:id", (req, res) => {
   console.log("GET /dadosDaTurma");
 
@@ -299,8 +294,6 @@ app.get("/dadosDaTurma/:id", (req, res) => {
             msg: "404",
           });
         } else {
-          console.log("Roupas : ", JSON.stringify(roupas));
-          console.log("Dados: ", JSON.stringify(row));
           res.render("pages/dadosDaTurma", {
             titulo: "Dados da Turma",
             dados: row,
@@ -311,10 +304,11 @@ app.get("/dadosDaTurma/:id", (req, res) => {
       });
     });
   } else {
-    tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
   }
 });
+
+// ==================== PÁGINAS DE ERRO ====================
 
 app.get("/nao-autorizado", (req, res) => {
   console.log("GET /nao-autorizado");
@@ -326,6 +320,7 @@ app.get("/nao-permitido", (req, res) => {
   res.render("pages/nao-permitido", { titulo: "Não Permitido" });
 });
 
+// Logout → encerra sessão
 app.get("/logout", (req, res) => {
   console.log("GET /logout");
   req.session.destroy(() => {
@@ -333,13 +328,12 @@ app.get("/logout", (req, res) => {
   });
 });
 
+// Rota genérica para 404
 app.use("/{*erro}", (req, res) => {
-  // Envia uma resposta de erro 404
-  res
-    .status(404)
-    .render("pages/fail", { titulo: "ERRO 404", req: req, msg: "404" });
+  res.status(404).render("pages/fail", { titulo: "ERRO 404", req: req, msg: "404" });
 });
 
+// ==================== INICIANDO SERVIDOR ====================
 app.listen(PORT, () => {
   console.log(`Servidor sendo excexutado na porta ${PORT}`);
   console.log(__dirname + "\\static");
