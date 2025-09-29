@@ -321,6 +321,11 @@ app.get("/nao-autorizado", (req, res) => {
   res.render("pages/nao-autorizado", { titulo: "Não Autorizado" });
 });
 
+app.get("/perda-conexao", (req, res) => {
+  console.log("GET /perda-conexao");
+  res.render("pages/perda-conexao", { titulo: "Erro no Servidor Interno" });
+});
+
 app.get("/nao-permitido", (req, res) => {
   console.log("GET /nao-permitido");
   res.render("pages/nao-permitido", { titulo: "Não Permitido" });
