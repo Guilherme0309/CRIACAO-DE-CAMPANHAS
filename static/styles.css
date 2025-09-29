@@ -6,35 +6,35 @@
   }
 
   body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom, #112553, #0E71C2);
-    color: #FFFFFF;
-    line-height: 1.6;
-    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif; /* define a fonte principal*/
+    background: linear-gradient(to bottom, #112553, #0E71C2); /* define o fundo da página*/ 
+    color: #FFFFFF; /* define a cor padrão do texto */
+    line-height: 1.6; /* define o espaçamento entre linhas de texto */
+    min-height: 100vh; /* altura minima visivel da pagina de 100vh vh = viewport height */
   }
 
   a {
-    font-size: large;
-    color: white;
+    font-size: large; /* define tamanho da fonte */
+    color: white; /* define a cor do texto */
 }
 
 header {
     list-style: none;
-    background-color: #112553;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    background-color: #112553; /* cor de fundo do header */
+    display: flex; /* organiza os elementos internos (logo-menu-botões) de forma alinhada e adaptada */
+    justify-content: center; /* alinha tudo horizontalmente no centro */
+    flex-wrap: wrap; /* deixa o cabeçalho mais responsivo */
 }
 
-header table {
-    background: transparent; /* sem cor de fundo */
-    padding: 7px 0;
-    width: 100%;
-    text-align: end;
+header table { /* estiliza as tabelas do header */
+    background: transparent; /* deixa o fundo transparente */
+    padding: 7px 0; /* define o tamanho dentro da tabela */
+    width: 100%; /* tabela ocupando todo o espaço que tem no header */
+    text-align: end; /* coloca o texto dentro da tabela no fim da linha */ 
     
 }
 
-header table img{
+header table img{ /*   */ 
   display: flex;
 }
 
