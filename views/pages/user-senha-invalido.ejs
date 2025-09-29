@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <%- include("../partials/head") %>
+<!-- Inclui o cabeçalho padrão (head.ejs) -->
 
 <body>
-     <br>
-    <center><h1>USUARIO OU SENHA INVALIDOS</h1>
     <br>
-    <a href="/login"><h2>Ir para a Página de Login</h2></a>
-    </center>
-    <%- include("../partials/footer") %>
-</body>
+    <center>
+        
+        <h1>USUARIO OU SENHA INVALIDOS</h1>
 
+        <br>
+
+        <!-- Link para voltar à página de login -->
+        <a href="/login">
+            <h2>Ir para a Página de Login</h2>
+        </a>
+    </center>
+
+    <%- include("../partials/footer") %>
+    <!-- Inclui o rodapé padrão (footer.ejs) -->
+</body>
 </html>

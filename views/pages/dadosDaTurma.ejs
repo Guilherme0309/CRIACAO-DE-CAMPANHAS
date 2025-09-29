@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Inclui o cabeçalho padrão da aplicação (head.ejs) -->
 <%- include("../partials/head") %>
 
 <body>
+  <!-- Inclui o menu de navegação -->
   <%- include("../partials/menu") %>
+  
+  
   <br><br>
-  <a href="/tabGeral/1"><img src="../../static/voltar.png" width="40px" / style="margin: 10px;"></a>
+
+  <!-- Botão de voltar (link para /tabGeral/1) -->
+  <a href="/tabGeral/1">
+    <img src="../../static/voltar.png" width="40px" style="margin: 10px;">
+  </a>
   <br>
+
+ 
   <center>
     <div>
+      <!-- Exibe o nome da turma -->
       <h1 id="h1Login">TURMA: <%= dados[0].sigla %></h1>
+      <!-- Exibe o nome do docente -->
       <h2>Docente: <%= dados[0].docente %></h2>
       <br>
+
       <main id="MainDash">
+        <!-- Tabela de arrecadações -->
         <table>
           <thead>
             <tr>
@@ -22,42 +36,55 @@
               <th>Pontos Ganhos</th>
             </tr>
           </thead>
+
           <tbody>
-            <% let i = 0; for (i = 0; i< roupas.length; i++) {%>
+            <!-- Loop pelas roupas cadastradas -->
+            <% let i = 0; for (i = 0; i < roupas.length; i++) { %>
             <tr>
-              <td><%= roupas[i].Descricao %> - <%= roupas[i].Pontos%> Pontos</td>
+              <!-- Coluna: descrição da roupa + pontos atribuídos por unidade -->
+              <td><%= roupas[i].Descricao %> - <%= roupas[i].Pontos %> Pontos</td>
+
+              <!-- Coluna: quantidade arrecadada da roupa -->
               <td>
-                <!-- FAZ A SOMA CASO EXISTAM MAIS ARRECADAÇÕES DE UMA MESMA ROUPA -->
+                <!-- Inicializa contador da quantidade -->
                 <% let qtd_roupas = 0 %>
-                <% for (let x = 0; x < dados.length; x++) {%>
-                <% if (roupas[i].Descricao == dados[x].Descricao) {%>
-                <% qtd_roupas += Number(dados[x].qtd) %>
+                <!-- Soma todas as arrecadações que tenham a mesma descrição da roupa -->
+                <% for (let x = 0; x < dados.length; x++) { %>
+                  <% if (roupas[i].Descricao == dados[x].Descricao) { %>
+                    <% qtd_roupas += Number(dados[x].qtd) %>
+                  <% } %>
                 <% } %>
-                <% } %>
-                <!-- EXIBE QTD ROUPAS -->
+                <!-- Exibe a quantidade total arrecadada dessa roupa -->
                 <%= qtd_roupas %>
               </td>
+
+              <!-- Coluna: pontos ganhos com a arrecadação dessa roupa -->
               <td>
-                <!-- FAZ A SOMA CASO EXISTAM MAIS ARRECADAÇÕES DE UMA MESMA ROUPA -->
+                <!-- Inicializa contador de pontos -->
                 <% let qtd_pontos = 0 %>
-                <% for (let x = 0; x < dados.length; x++) {%>
-                <% if (roupas[i].Descricao == dados[x].Descricao) {%>
-                <% qtd_pontos += Number(dados[x].Pontos) %>
+                <!-- Soma os pontos de todas as arrecadações da mesma roupa -->
+                <% for (let x = 0; x < dados.length; x++) { %>
+                  <% if (roupas[i].Descricao == dados[x].Descricao) { %>
+                    <% qtd_pontos += Number(dados[x].Pontos) %>
+                  <% } %>
                 <% } %>
-                <% } %>
-                <!-- EXIBE QTD ROUPAS -->
+                <!-- Exibe os pontos totais dessa roupa -->
                 <%= qtd_pontos %>
               </td>
             </tr>
             <% } %>
           </tbody>
+
           <tfoot>
+            <!-- Rodapé da tabela mostrando a soma total de pontos -->
             <td colspan="4">
               PONTOS GANHOS:
               <% let total_pontos = 0 %>
-              <% for (let x = 0; x < dados.length; x++) {%>
-              <% total_pontos += Number(dados[x].Pontos) %>
+              <!-- Soma os pontos de todas as arrecadações -->
+              <% for (let x = 0; x < dados.length; x++) { %>
+                <% total_pontos += Number(dados[x].Pontos) %>
               <% } %>
+              <!-- Exibe o total de pontos -->
               <%= total_pontos %>
             </td>
           </tfoot>
@@ -65,7 +92,10 @@
       </main>
     </div>
   </center>
+
   <br><br>
+
+  <!-- Inclui o rodapé padrão -->
   <%- include("../partials/footer") %>
 </body>
 

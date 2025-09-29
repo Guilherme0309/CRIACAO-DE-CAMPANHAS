@@ -1,40 +1,60 @@
+<!--
+    Página: Login
+    Esta página exibe o formulário de autenticação do usuário.
+    Contém campos de login e senha, envia os dados para a rota /login (POST).
+    Reutiliza o cabeçalho (head.ejs) e o rodapé padrão.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Inclui o cabeçalho padrão (head.ejs) -->
 <%- include("../partials/head") %>
 
 <body>
+    
     <br><br>    
+    
+
     <center>
+        <!-- Logo da aplicação -->
         <img src="../../static/Logo.png" width="250px">
+        
+        <!-- Título da página -->
         <h1 id="h1Login">LOGIN</h1>
+        
         <main>
+            <!-- Formulário de login (envia para /login via POST) -->
             <form action="/login" method="post" class="formItens">
-        <table id="tblLogin">
-            <tr>
-                <td>
-                    Login:
-                </td>
-                <td>
-                    <input type="text" name="username" id="username" placeholder="Digite seu nome de usuário">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Senha:
-                </td>
-                <td>
-                    <input type="password" name="password" id="password" placeholder="Digite sua senha">
-                </td>
-            </tr>
-        </table>
-        <br>
-        <br>
-        <button type="submit" id="btnEntrar" style="margin-bottom: 20px;">ENTRAR</button>
+                
+                <!-- Estrutura em tabela para alinhar os campos -->
+                <table id="tblLogin">
+                    <tr>
+                        <td>Login:</td>
+                        <td>
+                            <!-- Campo de usuário -->
+                            <input type="text" name="username" id="username" placeholder="Digite seu nome de usuário">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Senha:</td>
+                        <td>
+                            <!-- Campo de senha -->
+                            <input type="password" name="password" id="password" placeholder="Digite sua senha">
+                        </td>
+                    </tr>
+                </table>
+
+                
+                <br><br>
+
+                <!-- Botão de envio -->
+                <button type="submit" id="btnEntrar" style="margin-bottom: 20px;">ENTRAR</button>
             </form>
         </main>
     </center>
 
+    <!-- Inclui o rodapé padrão -->
     <%- include("../partials/footer") %>
 </body>
 

@@ -2,27 +2,39 @@
 <html lang="ptbr">
 
 <head>
+    <!-- Inclui o cabeçalho padrão (head.ejs) -->
     <%- include('../partials/head'); %>
 </head>
 
+
 <body class="container">
 
+    <!-- Cabeçalho da página, inclui o menu de navegação -->
     <header>
         <%- include('../partials/menu'); %>      
     </header>
 
+    <!-- Conteúdo principal da página -->
     <main>
         <div>
             <center>
-            <br><br>
-            <h1>Página não encontrada</h1>
-            <br>
-            <img src="/static/404.png">
-        </center>
+                
+                <br><br>
+
+                <!-- Mensagem de erro -->
+                <h1>Página não encontrada</h1>
+
+                <br>
+
+                <!-- Imagem ilustrativa do erro 404 -->
+                <img src="/static/404.png">
+            </center>
         </div>
     </main>
 
+    <!-- Rodapé padrão -->
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
 </body>
+</html>

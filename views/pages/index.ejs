@@ -1,20 +1,36 @@
+<!--
+    Página: Tabela Geral
+    Esta página exibe o ranking/tabela geral de pontos da aplicação.
+    Reutiliza componentes parciais como o menu, tabela de pontos e rodapé.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
-<%- include("../partials/head") %>
+<%- include("../partials/head") %> <!-- Inclui o cabeçalho padrão (head.ejs) -->
 
 <body>
-    <%- include("../partials/menu") %>
+    <!-- Inclui o menu de navegação -->
+    <%- include("../partials/menu") %> 
+    
+    <!-- Espaçamento -->
     <br><br>
+
+    <!-- Centraliza o conteúdo -->
     <center>
+        <!-- Título principal -->
         <h1 id="h1Login">TABELA GERAL</h1>
+        
         <main id="MainDash">
-        <%- include("../partials/pointsTable") %>
+            <!-- Inclui a tabela de pontos (pointsTable.ejs) -->
+            <%- include("../partials/pointsTable") %>
         </main>
     </center>
-    <br>
 
-    <%- include("../partials/footer") %>
+    <br>
+ 
+    <!-- Inclui o rodapé padrão -->
+    <%- include("../partials/footer") %> 
 </body>
 
 </html>

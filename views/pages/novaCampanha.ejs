@@ -2,145 +2,166 @@
 <html lang="en">
 
 
-
 <%- include("../partials/head") %>
+<!-- Inclui o cabeçalho padrão (head.ejs) -->
 
 <body>
     <%- include("../partials/menu") %>
-    <a href="/selectCampanha"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
+    <!-- Inclui o menu padrão do sistema -->
+
+    <!-- Botão de voltar -->
+    <a href="/selectCampanha">
+        <img src="../../static/voltar.png" alt="Voltar" width="3%">
+    </a>
+
+    <!-- Título da página -->
     <center><h1>NOVA CAMPANHA</h1></center>
+
     <br><br>
     <main>
         <center>
+            <!-- Formulário para criar uma nova campanha -->
             <form action="/novaCampanha" method="post" class="formItens"
             onsubmit="
-            const id_turmas = document.getElementById('Turmas').value;
-            const nome_campanha = document.getElementById('campanhaname').value;
-        
-        if (!id_turmas || !nome_campanha) {
-          alert('Preencha Todos os Campos para Postar a Campanha!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar uma Campanha?');" >
+                // Validação antes de enviar o formulário
+                const id_turmas = document.getElementById('Turmas').value;
+                const nome_campanha = document.getElementById('campanhaname').value;
+
+                if (!id_turmas || !nome_campanha) {
+                  alert('Preencha Todos os Campos para Postar a Campanha!');
+                  return false; // Impede envio
+                }
+                return confirm('Tem Certeza Que Deseja Adicionar uma Campanha?');
+            ">
+
             <table id="tblLogin">
+                <!-- Campo Nome da Campanha -->
                 <tr>
+                    <td><b>Nome Campanha:</b></td>
                     <td>
-                        <b>Nome Campanha:</b>
-                    </td>
-                    <td>
-                        <input type="text" name="campanhaname" id="campanhaname" placeholder="Digite o nome da Campanha">
+                        <input type="text" name="campanhaname" id="campanhaname" 
+                               placeholder="Digite o nome da Campanha">
                     </td>
                 </tr>
+
+                
+                <tr><td><br></td><td><br></td></tr>
+
+                <!-- Campo Turmas  -->
                 <tr>
-                    <td><br></td>
-                    <td><br></td>
-                </tr>
-                <tr>
-                    <td style=" text-align: left;">
-                        <b>Turmas:</b>
-                    </td>
+                    <td style="text-align: left;"><b>Turmas:</b></td>
                     <td>
-                        <div id="CheckedList" style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
+                        <div id="CheckedList" 
+                             style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
                             <% turmas.forEach(turma => { %>
-                                <input type="checkbox" id="Turmas" name="Turmas" value="<%= turma.id_turma %>" class="turma" checked="true">
+                                <input type="checkbox" id="Turmas" name="Turmas" 
+                                       value="<%= turma.id_turma %>" class="turma" checked="true">
                                 <label><%= turma.sigla %> - [<%= turma.docente %>]</label>
                                 <br>
                             <% }) %>
                         </div>
                     </td>
                 </tr>
+
+                <!-- Seção para adicionar itens -->
                 <tr>
-                    <td style=" text-align: left;">
-                        <br>
-                        <b>Adicionar Itens:</b>
-                    </td>
+                    <td style="text-align: left;"><br><b>Adicionar Itens:</b></td>
                     <td></td>
                 </tr>
+
+                <!-- Campo descrição do item -->
                 <tr>
-                    <td style=" text-align: left;">
-                        <br>
-                        Descrição Item: 
-                    </td>
+                    <td style="text-align: left;"><br>Descrição Item:</td>
                     <td>
                         <input type="text" id="itemName" placeholder="Digite a Desc. do Item">
                     </td>
                 </tr>
+
+                <!-- Campo pontos -->
                 <tr>
-                    <td style=" text-align: left;">
-                        Pontos:
-                    </td>
+                    <td style="text-align: left;">Pontos:</td>
                     <td>
                         <br>
                         <select name="pontos" id="pontos" style="width: 200px;">
                             <option value="">[Escolha]</option>
-                            <% let x = 1; for (x = 1 ; x< 100; x++) {%>
+                            <% let x = 1; for (x = 1 ; x < 100; x++) { %>
                                 <option value="<%= x %>"><%= x %></option>
                             <% } %>
-                          </select>
+                        </select>
                     </td>
                 </tr>
             </table>
-            <button id="addTask" type="button" onclick="let lista ">ADICIONAR ITEM</button>
 
+            <!-- Botão para adicionar item na lista -->
+            <button id="addTask" type="button">ADICIONAR ITEM</button>
+
+            <!-- Lista dinâmica de itens adicionados -->
             <ul id="listaTarefas" name="itensName">
-                <li></li
+                <li></li>
             </ul>
-            <br>
-            <br>
-            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">CRIAR</button>
-                </form>
-            </main>
-        </center>
+
+            <br><br>
+            <!-- Botão final para criar a campanha -->
+            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">
+                CRIAR
+            </button>
+            </form>
         </center>
     </main>
 
+    <!-- Script para manipular lista de itens -->
     <script>
         const tarefaInput = document.getElementById("itemName");
         const listaTarefas = document.getElementById("listaTarefas");
         const btnTarefas = document.getElementById("addTask");
-        const btnRemover = document.getElementById("removeTesk")
-        
-        function AddTarefa(){
-        
+
+        function AddTarefa() {
             const TextTask = tarefaInput.value.trim();
-        
-            if (TextTask === ""){
+
+            if (TextTask === "") {
                 alert("Por favor, digite uma tarefa!");
                 return;
             }
-        
+
+            // Cria novo item da lista
             const li = document.createElement("li");
             li.textContent = TextTask;
             
+            // Botão de remover
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "X";
             deleteBtn.classList.add("delete-btn");
-        
+
+            // Alterna estado de "concluído" ao clicar
             li.addEventListener("click", () => {
                 li.classList.toggle("completed");
             });
-        
+
+            // Remove item ao clicar no botão X
             deleteBtn.addEventListener("click", (event) => {
                 event.stopPropagation(); 
                 listaTarefas.removeChild(li);
             });
-        
+
             li.appendChild(deleteBtn);
             listaTarefas.appendChild(li);
-        
+
+            // Limpa input
             tarefaInput.value = "";
         }
-        
-        btnTarefas.addEventListener ("click", AddTarefa);
-        
-        tarefaInput.addEventListener("keypress", (event) =>{
-            if (event.key === "Enter"){
+
+        // Evento para adicionar item ao clicar no botão
+        btnTarefas.addEventListener("click", AddTarefa);
+
+        // Evento para adicionar item ao pressionar Enter
+        tarefaInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
                 AddTarefa();
             }
-        })
+        });
     </script>
 
     <%- include("../partials/footer") %>
+    <!-- Inclui rodapé padrão -->
 </body>
-
 </html>

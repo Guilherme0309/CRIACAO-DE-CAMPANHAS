@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Inclui o conteúdo do arquivo "head.ejs"  -->
 <%- include("../partials/head") %>
 
 <body>
+    <!-- Inclui o menu de navegação a partir do arquivo "menu.ejs" -->
     <%- include("../partials/menu") %>
+    
     <br><br>
+
+    <!-- Exibe os dados no console do servidor (EJS executa no Node antes de renderizar o HTML) -->
     <%- console.log(JSON.stringify(dados)); %>
+
     <center>
-    <h1 id="h1Login">ARRECADAÇÕES</h1>
-    <main id="MainDash">
-    <%- include("../partials/arrecadacoesTable") %>
-    </main>
+        <!-- Título principal da página -->
+        <h1 id="h1Login">ARRECADAÇÕES</h1>
+        
+        <!-- Conteúdo principal da página -->
+        <main id="MainDash">
+            <!-- Inclui a tabela de arrecadações do arquivo "arrecadacoesTable.ejs" -->
+            <%- include("../partials/arrecadacoesTable") %>
+        </main>
     </center>
+
+    <!-- Inclui o rodapé da página -->
     <%- include("../partials/footer") %>
 </body>
 
