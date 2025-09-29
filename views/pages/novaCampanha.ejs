@@ -14,7 +14,7 @@
         <center>
             <form action="/novaCampanha" method="post" class="formItens"
             onsubmit="
-            const id_turmas = document.getElementById('selectTurmas').value;
+            const id_turmas = document.getElementById('Turmas').value;
             const nome_campanha = document.getElementById('campanhaname').value;
         
         if (!id_turmas || !nome_campanha) {
@@ -42,7 +42,7 @@
                     <td>
                         <div id="CheckedList" style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
                             <% turmas.forEach(turma => { %>
-                                <input type="checkbox" name="Turmas" value="<%= turma.id_turma %>" class="turma" checked="true">
+                                <input type="checkbox" id="Turmas" name="Turmas" value="<%= turma.id_turma %>" class="turma" checked="true">
                                 <label><%= turma.sigla %> - [<%= turma.docente %>]</label>
                                 <br>
                             <% }) %>
@@ -80,8 +80,10 @@
                     </td>
                 </tr>
             </table>
-            <button id="addTask" type="button">ADICIONAR ITEM</button>
+            <button id="addTask" type="button" onclick="let lista ">ADICIONAR ITEM</button>
+
             <ul id="listaTarefas" name="itensName">
+                <li></li
             </ul>
             <br>
             <br>
@@ -136,7 +138,7 @@
                 AddTarefa();
             }
         })
-                    </script>
+    </script>
 
     <%- include("../partials/footer") %>
 </body>
