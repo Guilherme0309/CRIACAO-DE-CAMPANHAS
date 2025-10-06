@@ -62,7 +62,7 @@
                         Descrição Item: 
                     </td>
                     <td>
-                        <input type="text" id="itemName" placeholder="Digite a Desc. do Item">
+                        <input type="text" id="itemName" placeholder="Digite o nome do Item">
                     </td>
                 </tr>
                 <tr>
@@ -71,19 +71,18 @@
                     </td>
                     <td>
                         <br>
-                        <select name="pontos" id="pontos" style="width: 200px;">
+                        <select id="DdlPontos" style="width: 200px;">
                             <option value="">[Escolha]</option>
                             <% let x = 1; for (x = 1 ; x< 100; x++) {%>
-                                <option value="<%= x %>"><%= x %></option>
+                                <option value="<%= x %>"><%= x %> Pontos</option>
                             <% } %>
                           </select>
                     </td>
                 </tr>
             </table>
-            <button id="addTask" type="button" onclick="let lista ">ADICIONAR ITEM</button>
+            <button id="addTask" type="button">ADICIONAR ITEM</button>
 
-            <ul id="listaTarefas" name="itensName">
-                <li></li
+            <ul id="listaItens" name="itensName">
             </ul>
             <br>
             <br>
@@ -95,47 +94,59 @@
     </main>
 
     <script>
-        const tarefaInput = document.getElementById("itemName");
-        const listaTarefas = document.getElementById("listaTarefas");
-        const btnTarefas = document.getElementById("addTask");
+        const ItemInput = document.getElementById("itemName");
+        const selectPontos = document.getElementById("DdlPontos")
+        const listaItens = document.getElementById("listaItens");
+        const btnItens = document.getElementById("addTask");
         const btnRemover = document.getElementById("removeTesk")
         
-        function AddTarefa(){
+        function AddItem(){
         
-            const TextTask = tarefaInput.value.trim();
+            const descItem = ItemInput.value.trim();
+            const pontosItem = selectPontos.value;
         
-            if (TextTask === ""){
-                alert("Por favor, digite uma tarefa!");
+            if (descItem === "" || pontosItem === ""){
+                alert("Por favor, digite o nome do Item e Pontos!");
                 return;
             }
         
             const li = document.createElement("li");
-            li.textContent = TextTask;
+            li.textContent = descItem + "   " + pontosItem + " Pontos"; 
+
+            const inputItemDesc = document.createElement("input");
+            inputItemDesc.setAttribute("type", "hidden");
+            inputItemDesc.setAttribute("name", "ItemName");
+            inputItemDesc.setAttribute("value", descItem);
+
+            const inputItemPontos = document.createElement("input");
+            inputItemPontos.setAttribute("type", "hidden");
+            inputItemPontos.setAttribute("name", "ItemPontos");
+            inputItemPontos.setAttribute("value", pontosItem);
             
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "X";
             deleteBtn.classList.add("delete-btn");
         
-            li.addEventListener("click", () => {
-                li.classList.toggle("completed");
-            });
-        
             deleteBtn.addEventListener("click", (event) => {
                 event.stopPropagation(); 
-                listaTarefas.removeChild(li);
+                listaItens.removeChild(li);
             });
         
             li.appendChild(deleteBtn);
-            listaTarefas.appendChild(li);
+            li.appendChild(inputItemDesc);
+            li.appendChild(inputItemPontos);
+            listaItens.appendChild(li);
         
-            tarefaInput.value = "";
+            ItemInput.value = "";
+            selectPontos.value = ""
+
         }
         
-        btnTarefas.addEventListener ("click", AddTarefa);
+        btnItens.addEventListener ("click", AddItem);
         
-        tarefaInput.addEventListener("keypress", (event) =>{
+        ItemInput.addEventListener("keypress", (event) =>{
             if (event.key === "Enter"){
-                AddTarefa();
+                AddItem();
             }
         })
     </script>

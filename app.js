@@ -64,7 +64,9 @@ app.post("/login", (req, res) => {
   const query = `SELECT * FROM users WHERE username=? AND password=?`;
 
   db.get(query, [username, password], (err, row) => {
-    if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+    if (err) {
+      res.redirect("/perda-conexao");
+    }; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
 
     //1. Verificar se o usuário existe
     console.log(JSON.stringify(row));
@@ -92,6 +94,11 @@ app.get("/user-senha-invalido", (req, res) => {
   res.render("pages/user-senha-invalido", {
     titulo: "Usuario Senha Invalidos",
   });
+});
+
+app.get("/perda-conexao", (req, res) => {
+  console.log("GET /perda-conexao");
+  res.render("pages/perda-conexao", { titulo: "Erro no Servidor Interno" });
 });
 
 app.get("/pagInicialADM", (req, res) => {
@@ -319,11 +326,6 @@ app.get("/dadosDaTurma/:id", (req, res) => {
 app.get("/nao-autorizado", (req, res) => {
   console.log("GET /nao-autorizado");
   res.render("pages/nao-autorizado", { titulo: "Não Autorizado" });
-});
-
-app.get("/perda-conexao", (req, res) => {
-  console.log("GET /perda-conexao");
-  res.render("pages/perda-conexao", { titulo: "Erro no Servidor Interno" });
 });
 
 app.get("/nao-permitido", (req, res) => {
