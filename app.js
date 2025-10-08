@@ -12,7 +12,7 @@ const PORT = 8000;
 const db = new sqlite3.Database("dataBase.db");
 db.serialize(() => {
   db.run(
-    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT,cpf INTEGER(11), password TEXT, ativo INTEGER, tipo_perfil TEXT(3))"
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, ativo INTEGER, tipo_perfil TEXT(3))"
   );
   db.run(
     "CREATE TABLE IF NOT EXISTS Itens_Pontuacoes (id INTEGER PRIMARY KEY AUTOINCREMENT, Descricao TEXT, Pontos INTEGER, id_Campanha INTEGER, Ativo INTEGER)"
@@ -163,6 +163,28 @@ app.post("/novaCampanha", (req, res) => {
   //req.session.username, req.session.id
   if (req.session.adm) {
     console.log(JSON.stringify(req.body));
+
+    const { campanhaname, Turmas, itemName, itemPontos } = req.body;
+    const ativo = 1;
+    const query1 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)"
+    db.all(query1, [campanhaname, ativo], (err, row) => {
+      if (err) throw err;
+    });
+
+    const query2 = "SELECT id_Campanha FROM Campanhas WHERE nome_Campanha = ?"
+    db.all(query2, [campanhaname], (err, id) => {
+      if (err) throw err;
+      console.log(id);
+
+      const query3 = "INSERT INTO TurmasCampanhas (id_campanha, id_turma) VALUES";
+      db.all(query3,[], (err, row) =>{
+        Turmas.forEach(turma => {
+
+          
+        });
+      });
+    });
+
     res.redirect("/novaCampanha");
   } else {
     tituloError = "Não Permitido";
@@ -175,7 +197,7 @@ app.get("/tabGeral/:pag", (req, res) => {
     console.log("GET /");
     const pag = req.params.pag;
     const query =
-      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente,Sum(Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS totalPontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id GROUP BY Turmas.id_turma ORDER BY totalPontos DESC";
+      "  Turmas.id_turma, Turmas.sigla, Turmas.docente,Sum(Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS totalPontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id GROUP BY Turmas.id_turma ORDER BY totalPontos DESC";
     const query2 = "SELECT * from Turmas";
 
     db.all(query, [], (err, row1) => {

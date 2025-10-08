@@ -5,7 +5,7 @@
 
 <body>
     <%- include("../partials/menu") %>
-    <% console.log ('Dados: ' + dados)%>
+    <% console.log ('Dados: ' + JSON.stringify(dados))%>
     <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
     <center><h1>SELECIONAR CAMPANHA</h1></center>
     <br><br>
@@ -17,7 +17,7 @@
                 <select name="qtd" id="qtd" style="width: 200px;">
                     <option value="">[Escolha]</option>
                     <% dados.forEach(dado => { %>
-                        <option value="<%= dado %>"><%= dado %></option>
+                        <option value="<%= dado.id_Campanha %>"><%= dado.nome_Campanha %></option>
                     <% }) %>
                 </select>
             <% } %>
