@@ -164,28 +164,44 @@ app.post("/novaCampanha", (req, res) => {
   if (req.session.adm) {
     console.log(JSON.stringify(req.body));
 
-    const { campanhaname, Turmas, itemName, itemPontos } = req.body;
+    const { campanhaname, Turmas, ItemName, ItemPontos } = req.body;//Pega os dados enviados do Formulario
     const ativo = 1;
-    const query1 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)"
-    db.all(query1, [campanhaname, ativo], (err, row) => {
+
+    const query1 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)" //Insert do Nome da Campanha
+    db.run(query1, [campanhaname, ativo], function(err) {
+      if (err) throw err;
+      const id = this.lastID; // ID do registro recém-criado
+
+    console.log("Campanha criada com ID:", id);
+    
+    let query2 = "INSERT INTO TurmasCampanhas (id_campanha, id_turma) VALUES"; 
+    //Insert das Turmas por Campanha
+    Turmas.forEach((turma, i )=> {
+      query2 += `(${id} , ${turma} )`; //Valor de Cada Turma selecionada
+      if (i < Turmas.length - 1) query2 += ", ";
+    });
+
+    console.log(query2);
+
+    db.run(query2,[], function(err) {
       if (err) throw err;
     });
 
-    const query2 = "SELECT id_Campanha FROM Campanhas WHERE nome_Campanha = ?"
-    db.all(query2, [campanhaname], (err, id) => {
+    let query3 = "INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES";
+    for (let i = 0; i < ItemName.length; i++) {
+      query3 += `( '${ItemName[i]}' , ${ItemPontos[i]}, ${id}, 1)`;
+      if (i < ItemName.length - 1) query3 += ", ";
+    }
+    console.log(query3);
+
+    db.run(query3,[], function(err){
       if (err) throw err;
-      console.log(id);
-
-      const query3 = "INSERT INTO TurmasCampanhas (id_campanha, id_turma) VALUES";
-      db.all(query3,[], (err, row) =>{
-        Turmas.forEach(turma => {
-
-          
-        });
-      });
     });
 
-    res.redirect("/novaCampanha");
+    //alert("Campanha Registrada com Sucesso!")
+    res.redirect("/selectCampanha");
+
+    });
   } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");

@@ -28,4 +28,4 @@ INSERT INTO Turmas (sigla, docente, ativo) VALUES
 ('N3F', 'EVANDRO', 1);
 
 INSERT INTO users (username, password, ativo, tipo_perfil) VALUES
-('Admin', 'admin123', 1, 'ADM')
+('Admin', 'admin123', 1, 'ADM');
