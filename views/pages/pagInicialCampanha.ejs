@@ -7,9 +7,11 @@
     <%- include("../partials/menu") %>
 
     <main>
-        <a href="/selectCampanha">SELECIONAR CAMPANHA</a>
+        <a href="/tabGeral/<%=idCampanha%>/1">TABELA GERAL</a>
         <br><br>
-        <a href="/dashboard">DASHBOARD</a>
+        <% if (req.session.loggedin) { %>
+        <a href="/nova-doacao/<%=idCampanha%>">NOVA DOAÇÃO</a>
+        <% } %>
     </main>
     
     <%- include("../partials/footer") %>

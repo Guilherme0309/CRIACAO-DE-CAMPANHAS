@@ -6,7 +6,9 @@
 <body>
     <%- include("../partials/menu") %>
     <% console.log ('Dados: ' + JSON.stringify(dados))%>
+    <% if (req.session.adm){ %>
     <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
+    <% } %> 
     <center><h1>SELECIONAR CAMPANHA</h1></center>
     <br><br>
     <main>
@@ -14,16 +16,28 @@
         <% if (!dados || dados.length === 0)  {%>
             Nenhuma Campanha Criada
         <% } else {%>
-                <select name="qtd" id="qtd" style="width: 200px;">
+
+            <form action="/selectCampanha" method="post" onsubmit="
+                const selectedCampanha = document.getElementById('selectedCampanha');
+
+                if (!selectedCampanha.value){
+                    alert('Selecione uma Turma para prosseguir!!');
+                    return false;
+                }">
+
+                <select name="selectedCampanha" id="selectedCampanha" style="width: 200px;">
                     <option value="">[Escolha]</option>
                     <% dados.forEach(dado => { %>
                         <option value="<%= dado.id_Campanha %>"><%= dado.nome_Campanha %></option>
                     <% }) %>
                 </select>
+
             <% } %>
             <br><br>
+            <button type="submit" id="btnCriar" style="margin:0 20px;">CONFIRMAR</button>
+        </form>
         <% if (req.session.adm){ %>
-            <a href="/novaCampanha"><button>CRIAR NOVA CAMPANHA</button></a>
+            <a href="/novaCampanha"><button style="margin-top: 20px;">CRIAR NOVA CAMPANHA</button></a>
         <% } %>  
         </center>
     </main>

@@ -6,7 +6,11 @@
             </td>
             <td id="logout">
                 <br><br>
+                <% if (req.session.loggedin) { %>
                 <a href="/logout">Sair da Conta</a>
+                <% } else { %>
+                <a href="/login">Fazer Login</a>
+                <% } %>
             </td>
         </tr>
     </table>    

@@ -5,6 +5,8 @@
 
 <body>
     <%- include("../partials/menu") %>
+
+    <a href="/pagInicialCampanha/<%=idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="2%" style="margin: 10px;"></a>
     <center>
         <h1 id="h1Login">NOVA DOAÇÃO</h1>
         <main>
@@ -69,6 +71,7 @@
                 </td>
             </tr>
         </table>
+        <input type="hidden" id="id_Campanha" name="id_Campanha" value= "<%= idCampanha %>">
         <br>
         <br>
         <button type="submit" id="btnPost" style="margin-bottom: 20px;">GRAVAR ARRECADAÇÃO</button>

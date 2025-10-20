@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true })); // Versão Express >= 5.x.x
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.redirect("/login");
+  res.redirect("/selectCampanha");
 });
 
 app.get("/login", (req, res) => {
@@ -112,8 +112,19 @@ app.get("/pagInicialADM", (req, res) => {
   }
 })
 
+app.get ("/dashboard", (req,res) => {
+
+ if (req.session.adm) {
+    console.log("GET /dashboard");
+    res.render("pages/dashboard", {titulo: "Dashboard Campanhas", req: req});
+      
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+})
+
 app.get("/selectCampanha", (req, res) => {
-  if (req.session.loggedin) {
     console.log("GET /selectCampanha");
     const query =
       "SELECT * From Campanhas";
@@ -129,6 +140,175 @@ app.get("/selectCampanha", (req, res) => {
           req: req,
         });
       
+    });
+});
+
+app.post ("/selectCampanha", (req, res) => {
+  console.log("POST /selectCampanha");
+  console.log(JSON.stringify(req.body));
+  const {selectedCampanha} = req.body;//Pega os dados enviados do Formulario
+  console.log("ID Campanha Selecionada: " + JSON.stringify(selectedCampanha));
+  res.redirect(`/pagInicialCampanha/${selectedCampanha}`);
+});
+
+app.get ("/pagInicialCampanha/:idCampanha", (req, res) => {
+
+  const idCampanha = req.params.idCampanha;
+
+  res.render("pages/pagInicialCampanha", {
+          titulo: "Página da Campanha",
+          req: req,
+          idCampanha: idCampanha
+        });
+});
+
+app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
+    console.log("GET /tabGeral");
+    const idCampanha = req.params.idCampanha;
+    const pag = req.params.pag;
+    const query = "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,Sum(arc.qtd * ip.Pontos) AS totalPontos FROM Arrecadacoes arc INNER JOIN Turmas t ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma";
+   //const query = "SELECT * FROM Arrecadacoes arc INNER JOIN Turmas t ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ?";
+    const query2 = "SELECT * from Turmas";
+
+    db.all(query, [idCampanha], (err, row1) => {
+      if (err) throw err;
+
+      db.all(query2, [], (err, row2) => {
+        if (err) throw err;
+
+        console.log("DADOS: ", JSON.stringify(row1));
+        //console.log("TURMAS: ", JSON.stringify(row2));
+        res.render("pages/tabGeral", {
+          titulo: "Arrecadações",
+          idCampanha: idCampanha,
+          dados: row1,
+          turmas: row2,
+          req: req,
+          pag: pag,
+        });
+      });
+    });
+});
+
+app.get("/arrecadacoes/:pag", (req, res) => {
+  if (req.session.loggedin) {
+    console.log("GET /arrecadacoes");
+    const pag = req.params.pag;
+    const orderBy = req.query.orderBy;
+    console.log(orderBy);
+    let query =
+      "SELECT id_arrecadacao, Turmas.sigla, Pontuacao_Roupas.Descricao, Pontuacao_Roupas.Pontos, qtd, data FROM Arrecadacoes INNER JOIN Turmas ON Arrecadacoes.id_turma = Turmas.id_turma INNER JOIN Pontuacao_Roupas ON Arrecadacoes.id_roupa = Pontuacao_Roupas.id ORDER BY ";
+    if (orderBy == "data"){
+      query += " Arrecadacoes.id_arrecadacao DESC";
+    } else if (orderBy == "sala"){
+      query += " Arrecadacoes.id_turma";
+    } else {
+      query += " Arrecadacoes.id_turma";
+    }
+      db.all(query, [], (err, row) => {
+      if (err) throw err;
+      res.render("pages/arrecadacoes", {
+        titulo: "Arrecadações",
+        dados: row,
+        req: req,
+        pag: pag,
+        orderBy: orderBy,
+      });
+    });
+  } else {
+    tituloError = "Não Autorizado";
+    res.redirect("/nao-autorizado");
+  }
+});
+
+app.get("/nova-doacao/:idCampanha", (req, res) => {
+  if (req.session.adm) {
+    const idCampanha = req.params.idCampanha;
+    console.log("ID CAMPANHA: " + JSON.stringify(idCampanha))
+    console.log("GET /nova-doacao");
+    const query = "SELECT tc.id_turma, t.sigla, t.docente FROM TurmasCampanhas tc INNER JOIN Turmas t on t.id_turma = tc.id_turma WHERE id_campanha = ? and ativo = 1";
+    const query2 = "SELECT * FROM Itens_Pontuacoes WHERE id_Campanha = ? and ativo = 1";
+
+    // Primeiro obtemos os dados de ambas as tabelasv
+    db.all(query, [idCampanha], (err, turmas) => {
+      if (err) throw err;
+      console.log(JSON.stringify(turmas))
+
+      db.all(query2, [idCampanha], (err, pontuacoes) => {
+        if (err) throw err;
+        console.log(JSON.stringify(pontuacoes))
+        // Só renderizamos a página quando temos todos os dados
+        res.render("pages/nova-doacao", {
+          titulo: "Nova Doação",
+          req: req,
+          turmas: turmas,
+          pontuacoes: pontuacoes,
+          idCampanha: idCampanha
+        });
+      });
+    });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
+app.post("/nova-doacao", (req, res) => {
+  console.log("POST /nova-doacao");
+  // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
+  //req.session.username, req.session.id
+  if (req.session.adm) {
+    const {id_Campanha, id_turma, id_roupa, qtd } = req.body;
+    const query = `INSERT INTO Arrecadacoes (id_campanha, id_turma, id_item, qtd, data) VALUES (?, ?, ? , ?, ?)`;
+    const data = new Date();
+    const data_atual = data.toLocaleDateString();
+    console.log(JSON.stringify(req.body));
+    console.log(JSON.stringify(data_atual));
+
+    db.get(query, [id_Campanha, id_turma, id_roupa, qtd, data_atual], (err, row) => {
+      if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+      //1. Verificar se o usuário existe
+      console.log(JSON.stringify(row));
+      res.redirect(`/nova-doacao/${id_Campanha}`);
+    });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
+app.get("/dadosDaTurma/:id", (req, res) => {
+  console.log("GET /dadosDaTurma");
+
+  if (req.session.loggedin) {
+    const TurmaId = req.params.id;
+    const query1 =
+      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente, Pontuacao_Roupas.Descricao, Arrecadacoes.qtd, (Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS Pontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id Where Turmas.id_turma = ?";
+    const query2 = "SELECT * FROM Pontuacao_Roupas";
+
+    db.all(query1, [TurmaId], (err, row) => {
+      if (err) throw err;
+      db.all(query2, [], (err, roupas) => {
+        if (err) throw err;
+
+        if (row == "") {
+          res.status(404);
+          res.render("pages/fail", {
+            titulo: "ERRO 404",
+            req: req,
+            msg: "404",
+          });
+        } else {
+          console.log("Roupas : ", JSON.stringify(roupas));
+          console.log("Dados: ", JSON.stringify(row));
+          res.render("pages/dadosDaTurma", {
+            titulo: "Dados da Turma",
+            dados: row,
+            roupas: roupas,
+            req: req,
+          });
+        }
+      });
     });
   } else {
     tituloError = "Não Autorizado";
@@ -205,159 +385,6 @@ app.post("/novaCampanha", (req, res) => {
   } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
-  }
-});
-
-app.get("/tabGeral/:pag", (req, res) => {
-  if (req.session.loggedin) {
-    console.log("GET /");
-    const pag = req.params.pag;
-    const query =
-      "  Turmas.id_turma, Turmas.sigla, Turmas.docente,Sum(Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS totalPontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id GROUP BY Turmas.id_turma ORDER BY totalPontos DESC";
-    const query2 = "SELECT * from Turmas";
-
-    db.all(query, [], (err, row1) => {
-      if (err) throw err;
-
-      db.all(query2, [], (err, row2) => {
-        if (err) throw err;
-
-        console.log("DADOS: ", JSON.stringify(row1));
-        console.log("TURMAS: ", JSON.stringify(row2));
-        res.render("pages/index", {
-          titulo: "Arrecadações",
-          dados: row1,
-          turmas: row2,
-          req: req,
-          pag: pag,
-        });
-      });
-    });
-  } else {
-    tituloError = "Não Autorizado";
-    res.redirect("/nao-autorizado");
-  }
-});
-
-app.get("/arrecadacoes/:pag", (req, res) => {
-  if (req.session.loggedin) {
-    console.log("GET /arrecadacoes");
-    const pag = req.params.pag;
-    const orderBy = req.query.orderBy;
-    console.log(orderBy);
-    let query =
-      "SELECT id_arrecadacao, Turmas.sigla, Pontuacao_Roupas.Descricao, Pontuacao_Roupas.Pontos, qtd, data FROM Arrecadacoes INNER JOIN Turmas ON Arrecadacoes.id_turma = Turmas.id_turma INNER JOIN Pontuacao_Roupas ON Arrecadacoes.id_roupa = Pontuacao_Roupas.id ORDER BY ";
-    if (orderBy == "data"){
-      query += " Arrecadacoes.id_arrecadacao DESC";
-    } else if (orderBy == "sala"){
-      query += " Arrecadacoes.id_turma";
-    } else {
-      query += " Arrecadacoes.id_turma";
-    }
-      db.all(query, [], (err, row) => {
-      if (err) throw err;
-      res.render("pages/arrecadacoes", {
-        titulo: "Arrecadações",
-        dados: row,
-        req: req,
-        pag: pag,
-        orderBy: orderBy,
-      });
-    });
-  } else {
-    tituloError = "Não Autorizado";
-    res.redirect("/nao-autorizado");
-  }
-});
-
-app.get("/nova-doacao", (req, res) => {
-  if (req.session.adm) {
-    console.log("GET /nova-doacao");
-    const query = "SELECT * FROM Turmas";
-    const query2 = "SELECT * FROM Pontuacao_Roupas";
-
-    // Primeiro obtemos os dados de ambas as tabelas
-    db.all(query, [], (err, turmas) => {
-      if (err) throw err;
-
-      db.all(query2, [], (err, pontuacoes) => {
-        if (err) throw err;
-
-        // Só renderizamos a página quando temos todos os dados
-        res.render("pages/nova-doacao", {
-          titulo: "Nova Doação",
-          req: req,
-          turmas: turmas,
-          pontuacoes: pontuacoes,
-        });
-      });
-    });
-  } else {
-    tituloError = "Não Permitido";
-    res.redirect("/nao-permitido");
-  }
-});
-
-app.post("/nova-doacao", (req, res) => {
-  console.log("POST /nova-doacao");
-  // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
-  //req.session.username, req.session.id
-  if (req.session.adm) {
-    const { id_turma, id_roupa, qtd } = req.body;
-    const query = `INSERT INTO Arrecadacoes (id_turma, id_roupa, qtd, data) VALUES (?, ? , ?, ?)`;
-    const data = new Date();
-    const data_atual = data.toLocaleDateString();
-    console.log(JSON.stringify(req.body));
-    console.log(JSON.stringify(data_atual));
-
-    db.get(query, [id_turma, id_roupa, qtd, data_atual], (err, row) => {
-      if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
-      //1. Verificar se o usuário existe
-      console.log(JSON.stringify(row));
-      res.redirect("/nova-doacao");
-    });
-  } else {
-    tituloError = "Não Permitido";
-    res.redirect("/nao-permitido");
-  }
-});
-
-app.get("/dadosDaTurma/:id", (req, res) => {
-  console.log("GET /dadosDaTurma");
-
-  if (req.session.loggedin) {
-    const TurmaId = req.params.id;
-    const query1 =
-      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente, Pontuacao_Roupas.Descricao, Arrecadacoes.qtd, (Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS Pontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id Where Turmas.id_turma = ?";
-    const query2 = "SELECT * FROM Pontuacao_Roupas";
-
-    db.all(query1, [TurmaId], (err, row) => {
-      if (err) throw err;
-      db.all(query2, [], (err, roupas) => {
-        if (err) throw err;
-
-        if (row == "") {
-          res.status(404);
-          res.render("pages/fail", {
-            titulo: "ERRO 404",
-            req: req,
-            msg: "404",
-          });
-        } else {
-          console.log("Roupas : ", JSON.stringify(roupas));
-          console.log("Dados: ", JSON.stringify(row));
-          res.render("pages/dadosDaTurma", {
-            titulo: "Dados da Turma",
-            dados: row,
-            roupas: roupas,
-            req: req,
-          });
-        }
-      });
-    });
-  } else {
-    tituloError = "Não Autorizado";
-    res.redirect("/nao-autorizado");
   }
 });
 

@@ -11,9 +11,6 @@
   <tbody>
     <% let qtd_posts = pag*5 %>
 
-    <%- console.log(JSON.stringify(qtd_posts)); %>
-    <%- console.log(JSON.stringify(dados.length)); %>
-
     <!-- LISTAGEN DE 5 em 5 POSTS -->
       <% let i = qtd_posts-5; for (i = qtd_posts-5 ; i< qtd_posts; i++) {%>
         <% if (i < dados.length) {%>
