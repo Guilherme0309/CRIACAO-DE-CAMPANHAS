@@ -388,6 +388,32 @@ app.get("/nao-autorizado", (req, res) => {
   res.render("pages/nao-autorizado", { titulo: "Não Autorizado" });
 });
 
+app.get("/pagUsuarios/:pag", (req, res) => {
+  console.log("GET /PagUsuarios");
+  const pag = req.params.pag;
+  const query = `SELECT * FROM users`;
+
+  db.all(query, [], (err, dados) => {
+    if (err) throw err; 
+    console.log(JSON.stringify(dados));
+    res.render("pages/PagUsuarios", { titulo: "Pagina de Usuarios", req: req, pag: pag, dados:dados });
+});
+});
+
+app.get("/pagTurmas/:pag", (req, res) => {
+  console.log("GET /PagTurmas");
+  const pag = req.params.pag;
+  const query = `SELECT * FROM Turmas`;
+
+  db.all(query, [], (err, dados) => {
+    if (err) throw err; 
+    console.log(JSON.stringify(JSON.stringify(dados)));
+    res.render("pages/pagTurmas", { titulo: "Pagina de Usuarios", req: req, pag: pag, dados:dados });
+});
+});
+
+
+
 app.get("/nao-permitido", (req, res) => {
   console.log("GET /nao-permitido");
   res.render("pages/nao-permitido", { titulo: "Não Permitido" });
