@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head") %>
+
+<body>
+  
+    <%- console.log(dados) %>
+    <main><%- include("../partials/menu") %></main>
+    
+    <% if (req.session.adm){ %>
+    <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
+    <% } %> 
+
+    <%- include("../partials/UsersTable") %>
+    
+    <%- include("../partials/footer") %>
+</body>
+
+</html>
