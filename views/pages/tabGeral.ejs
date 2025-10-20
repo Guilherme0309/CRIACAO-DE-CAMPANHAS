@@ -5,7 +5,12 @@
 
 <body>
     <%- include("../partials/menu") %>
-    <a href="/pagInicialCampanha/<%=idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+    <% if (req.session.loggedin) { %>
+    <a href="/pagInicialCampanha/<%=idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a> 
+    <% } else {%>
+        <a href="/selectCampanha"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a> 
+    <% } %>
+    
 
     <center>
         <h1 id="h1Login">TABELA GERAL</h1>

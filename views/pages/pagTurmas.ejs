@@ -6,14 +6,16 @@
 <body>
   
     <%- console.log(dados) %>
-    <main><%- include("../partials/menu") %></main>
+    <%- include("../partials/menu") %>
 
     <% if (req.session.adm){ %>
-    <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
+    <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
     <% } %>   
-
+    <main id="MainDash">
+    <center>
     <%- include("../partials/TurmasTable") %>
-
+    </center>
+    </main>
     <%- include("../partials/footer") %>
 </body>
 

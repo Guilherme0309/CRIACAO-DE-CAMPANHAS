@@ -148,18 +148,26 @@ app.post ("/selectCampanha", (req, res) => {
   console.log(JSON.stringify(req.body));
   const {selectedCampanha} = req.body;//Pega os dados enviados do Formulario
   console.log("ID Campanha Selecionada: " + JSON.stringify(selectedCampanha));
+  if(req.session.loggedin){
   res.redirect(`/pagInicialCampanha/${selectedCampanha}`);
+  }else {
+  res.redirect(`/tabGeral/${selectedCampanha}/1`);
+  }
 });
 
 app.get ("/pagInicialCampanha/:idCampanha", (req, res) => {
 
   const idCampanha = req.params.idCampanha;
-
+  if(req.session.adm){
   res.render("pages/pagInicialCampanha", {
           titulo: "Página da Campanha",
           req: req,
           idCampanha: idCampanha
         });
+} else {
+  tituloError = "Não Permitido";
+  res.redirect("/nao-permitido");
+}
 });
 
 app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
