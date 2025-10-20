@@ -166,8 +166,7 @@ app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
     console.log("GET /tabGeral");
     const idCampanha = req.params.idCampanha;
     const pag = req.params.pag;
-    const query = "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,Sum(arc.qtd * ip.Pontos) AS totalPontos FROM Arrecadacoes arc INNER JOIN Turmas t ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma";
-   //const query = "SELECT * FROM Arrecadacoes arc INNER JOIN Turmas t ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ?";
+    const query = "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma";
     const query2 = "SELECT * from Turmas";
 
     db.all(query, [idCampanha], (err, row1) => {
@@ -277,18 +276,17 @@ app.post("/nova-doacao", (req, res) => {
   }
 });
 
-app.get("/dadosDaTurma/:id", (req, res) => {
+app.get("/dadosDaTurma/:id/:idCampanha", (req, res) => {
   console.log("GET /dadosDaTurma");
 
-  if (req.session.loggedin) {
     const TurmaId = req.params.id;
-    const query1 =
-      "SELECT Turmas.id_turma, Turmas.sigla, Turmas.docente, Pontuacao_Roupas.Descricao, Arrecadacoes.qtd, (Arrecadacoes.qtd * Pontuacao_Roupas.Pontos) AS Pontos FROM Turmas INNER JOIN Arrecadacoes ON Turmas.id_turma = Arrecadacoes.id_turma INNER JOIN Pontuacao_Roupas on Arrecadacoes.id_Roupa = Pontuacao_Roupas.id Where Turmas.id_turma = ?";
-    const query2 = "SELECT * FROM Pontuacao_Roupas";
+    const idCampanha = req.params.idCampanha;
+    const query1 = "SELECT t.id_turma, t.sigla, t.docente, ip.Descricao, arc.qtd, ip.Pontos, (arc.qtd * ip.Pontos) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? AND t.id_turma = ?";
+    const query2 = "SELECT * FROM Itens_Pontuacoes WHERE id_Campanha=?";
 
-    db.all(query1, [TurmaId], (err, row) => {
+    db.all(query1, [idCampanha, TurmaId], (err, row) => {
       if (err) throw err;
-      db.all(query2, [], (err, roupas) => {
+      db.all(query2, [idCampanha], (err, itens) => {
         if (err) throw err;
 
         if (row == "") {
@@ -299,21 +297,18 @@ app.get("/dadosDaTurma/:id", (req, res) => {
             msg: "404",
           });
         } else {
-          console.log("Roupas : ", JSON.stringify(roupas));
+          console.log("Itens : ", JSON.stringify(itens));
           console.log("Dados: ", JSON.stringify(row));
           res.render("pages/dadosDaTurma", {
             titulo: "Dados da Turma",
             dados: row,
-            roupas: roupas,
+            itens: itens,
             req: req,
+            idCampanha: idCampanha
           });
         }
       });
     });
-  } else {
-    tituloError = "Não Autorizado";
-    res.redirect("/nao-autorizado");
-  }
 });
 
 app.get("/novaCampanha", (req, res) => {
