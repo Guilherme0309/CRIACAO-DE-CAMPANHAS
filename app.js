@@ -21,7 +21,7 @@ db.serialize(() => {
     "CREATE TABLE IF NOT EXISTS Turmas (id_turma INTEGER PRIMARY KEY AUTOINCREMENT, sigla TEXT, docente TEXT, ativo INTEGER)"
   );
   db.run(
-    "CREATE TABLE IF NOT EXISTS Arrecadacoes (id_arrecadacao INTEGER PRIMARY KEY AUTOINCREMENT, id_campanha INTEGER, id_turma INTEGER, id_Item, qtd INTEGER, data TEXT)"
+    "CREATE TABLE IF NOT EXISTS Arrecadacoes (id_arrecadacao INTEGER PRIMARY KEY AUTOINCREMENT, id_campanha INTEGER, id_turma INTEGER, id_Item INTEGER, qtd INTEGER, data TEXT)"
   );
   db.run(
     "CREATE TABLE IF NOT EXISTS Campanhas (id_Campanha INTEGER PRIMARY KEY AUTOINCREMENT, nome_Campanha TEXT, Ativo INTEGER)"
@@ -174,7 +174,7 @@ app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
     console.log("GET /tabGeral");
     const idCampanha = req.params.idCampanha;
     const pag = req.params.pag;
-    const query = "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma";
+    const query = "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma ORDER BY totalPontos DESC";
     const query2 = "SELECT * from Turmas";
 
     db.all(query, [idCampanha], (err, row1) => {
