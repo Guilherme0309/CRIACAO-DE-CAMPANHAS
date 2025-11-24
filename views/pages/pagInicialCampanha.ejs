@@ -8,7 +8,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 100px;
         gap: 30px; /* espaço entre os botões */
     }
 
@@ -41,6 +40,8 @@
 
         <% if (req.session.loggedin) { %>
             <a href="/nova-doacao/<%=idCampanha%>">NOVA DOAÇÃO</a>
+            <a href="/editItens/<%=idCampanha%>/1">EDITAR ITENS</a>
+            <br>
         <% } %>
     </main>
     

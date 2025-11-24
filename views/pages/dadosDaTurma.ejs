@@ -24,7 +24,12 @@
           <tbody>
             <% let i = 0; for (i = 0; i< itens.length; i++) {%>
             <tr>
-              <td><%= itens[i].Descricao %> | <%= itens[i].Pontos%> Pontos</td>
+              <td>
+              <%= itens[i].Descricao %> | <%= itens[i].Pontos%> Pontos
+              <% if (itens[i].Ativo == 0) { %>
+               (Desativado)
+              <% } %> 
+              </td>
               <td>
                 <!-- FAZ A SOMA CASO EXISTAM MAIS ARRECADAÇÕES DE UMA MESMA ROUPA -->
                 <% let qtd_itens = 0 %>

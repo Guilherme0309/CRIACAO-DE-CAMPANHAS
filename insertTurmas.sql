@@ -31,3 +31,5 @@ INSERT INTO users (username, password, ativo, tipo_perfil) VALUES
 ('Admin', 'admin123', 1, 'ADM');
 
 DELETE FROM Campanhas Where id_Campanha = 1;
+
+UPDATE Itens_Pontuacoes SET Descricao = 'Roupa de Cama' WHERE id = 6;

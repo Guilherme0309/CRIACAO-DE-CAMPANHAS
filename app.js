@@ -226,6 +226,79 @@ app.get("/arrecadacoes/:pag", (req, res) => {
   }
 });
 
+
+app.get('/editItens/:id/:pag', (req, res) => {
+  
+  console.log("GET/editItens")
+
+  if(req.session.adm){
+    const idCampanha = req.params.id;
+    const pag = req.params.pag;
+    const query = 'SELECT * FROM Itens_Pontuacoes WHERE id_Campanha = ?'
+    db.all(query, [idCampanha], (err, itens) => {
+      if (err) throw err;
+      console.log(JSON.stringify(itens));
+      res.render('pages/editItens', {titulo: 'Editar Itens', req: req, pag: pag, idCampanha: idCampanha, dados: itens});
+    });
+  }else{
+    tituloError = "Não Autorizado";
+    res.redirect("/nao-autorizado");
+  }  
+  
+});
+
+
+app.get('/addItem/:id', (req, res) => {
+    console.log ('POST /addItem')
+
+    if (req.session.adm){
+    const idCampanha = req.params.id;
+    res.render('pages/addItem', {titulo: 'Adicionar Item', req: req, idCampanha: idCampanha});
+    } else{
+      tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+    }
+});
+
+app.post('/addItem/:id', (req, res) => {
+  console.log ('POST /addItem')
+  if (req.session.adm){
+    const idCampanha = req.params.id;
+    const { descricao, DdlPontos } = req.body;
+    console.log(`Descrição: ${descricao}`);
+    console.log(`Pontos: ${DdlPontos}`);
+
+    const query = 'INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES (?,?,?,1)';
+    db.get(query, [descricao, DdlPontos, idCampanha],(err, row) => {
+        if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+        //1. Verificar se o usuário existe
+        res.redirect(`/editItens/1/${idCampanha}`);
+      })
+    
+    } else{
+      tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+    }
+})
+
+
+app.get('/desativarItem/:idCampanha/:idItem', (req, res) => {
+    console.log("GET/DesativarCampanha")
+    if(req.session.adm){
+    const idCampanha = req.params.idCampanha;
+    const idItem = req.params.idItem;
+    const query = 'UPDATE Itens_Pontuacoes SET Ativo = 0 WHERE id = ?; '
+    db.all(query, [idItem], (err, row) => {
+      if (err) throw err;
+      res.redirect(`/editItens/${idCampanha}/1`);
+    });
+  } else{
+    tituloError = "Não Permitido";
+  res.redirect("/nao-permitido");
+  }
+});
+
+
 app.get("/nova-doacao/:idCampanha", (req, res) => {
   if (req.session.adm) {
     const idCampanha = req.params.idCampanha;

@@ -1,0 +1,44 @@
+<table>
+  <thead>
+    <tr>
+      <th>DESCRIÇÃO</th>
+      <th>PONTOS</th>
+      <th>ATIVO</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% let qtd_posts = pag*5 %>
+    <!-- LISTAGEN DE 5 em 5 POSTS -->
+       <% let i = qtd_posts-5; for (i = qtd_posts-5 ; i< qtd_posts; i++) {%>
+        <% if (i < dados.length) {%>
+        <tr>
+          <td><%= dados[i].Descricao %></td>
+          <td><%= dados[i].Pontos %></td>
+          <td><% if (dados[i].Ativo == 1) {%>
+              <a href="/desativarItem/<%= idCampanha%>/<%=dados[i].id%>" 
+              onclick="return confirm('Tem Certeza Que Deseja Desativar o Item?');">
+                Desativar Item
+              </a>
+              <% } else {%>
+                <b>Item ja Desativado</b>
+              <% }%>
+              </td>
+        </tr>
+         <% } %>
+         <% } %>
+        </tbody>
+    <tfoot>
+      <tr>
+          <td colspan="5">
+          <% if (pag > 1) {%>
+          <a href="/pagTurmas/<%= Number(pag) - 1 %>">⬅</a>
+          <% } %>
+          <% if (qtd_posts < dados.length) {%>
+          <a href="/pagTurmas/<%= Number(pag) + 1  %>">⮕</a>
+          <% } %>
+        </td>
+      </tr>
+    </tfoot>
+    <!-- SE EXISTIREM 5 POSTS OU MENOS -->
+  
+</table>

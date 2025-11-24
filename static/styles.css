@@ -137,10 +137,6 @@ table tbody tr {
   border-bottom: 1px solid #dddddd;
 }
 
-table tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
 table td {
   padding: 12px 15px;
 }
@@ -158,10 +154,6 @@ table tfoot a {
   padding: 5px 10px;
   border-radius: 3px;
   font-size: 29px;
-}
-
-table tfoot a:hover {
-  background-color: #112553;
 }
 }
 
