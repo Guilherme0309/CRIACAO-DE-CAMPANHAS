@@ -4,6 +4,7 @@
       <th>DESCRIÇÃO</th>
       <th>PONTOS</th>
       <th>ATIVO</th>
+      <th>DESATIVAR</th>
     </tr>
   </thead>
   <tbody>
@@ -13,11 +14,16 @@
         <% if (i < dados.length) {%>
         <tr>
           <td><%= dados[i].Descricao %> 
-            <% if (dados[i].Ativo == 0) {%>
-              (Desativado)
-            <% } %>
           </td>
-          <td><%= dados[i].Pontos %></td>
+          <td><%= dados[i].Pontos %> Pontos</td>
+          <td>
+            <% if (dados[i].Ativo == 1) {%>
+              Ativo
+            <%} else if (dados[i].Ativo == 0) {%>
+              Desativado
+            <% } %>
+            
+          </td>
           <td><% if (dados[i].Ativo == 1) {%>
               <a href="/desativarItem/<%= idCampanha%>/<%=dados[i].id%>" 
               onclick="return confirm('Tem Certeza Que Deseja Desativar o Item?');">

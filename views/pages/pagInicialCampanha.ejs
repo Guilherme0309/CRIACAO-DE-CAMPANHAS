@@ -40,9 +40,12 @@
 
         <% if (req.session.loggedin) { %>
             <a href="/nova-doacao/<%=idCampanha%>">NOVA DOAÇÃO</a>
-            <a href="/editItens/<%=idCampanha%>/1">EDITAR ITENS</a>
-            <br>
         <% } %>
+
+        <% if (req.session.adm) { %>
+        <a href="/editItens/<%=idCampanha%>/1">EDITAR ITENS</a>
+        <% } %>
+        <br>
     </main>
     
     <%- include("../partials/footer") %>

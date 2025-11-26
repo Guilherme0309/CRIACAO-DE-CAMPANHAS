@@ -61,7 +61,7 @@ app.post("/login", (req, res) => {
   console.log(JSON.stringify(req.body));
   const { username, password } = req.body;
 
-  const query = `SELECT * FROM users WHERE username=? AND password=?`;
+  const query = `SELECT * FROM users WHERE username=? AND password=? AND ativo= 1`;
 
   db.get(query, [username, password], (err, row) => {
     if (err) {
@@ -80,7 +80,7 @@ app.post("/login", (req, res) => {
         res.redirect("/pagInicialADM");
       } else {
         req.session.adm = false;
-        res.redirect("/tabGeral/1");
+        res.redirect("/selectCampanha");
       }
     } else {
       //3. Se não, executar processo de negação de login
@@ -155,7 +155,7 @@ app.post("/selectCampanha", (req, res) => {
 
 app.get("/pagInicialCampanha/:idCampanha", (req, res) => {
   const idCampanha = req.params.idCampanha;
-  if (req.session.adm) {
+  if (req.session.loggedin) {
     res.render("pages/pagInicialCampanha", {
       titulo: "Página da Campanha",
       req: req,
@@ -316,7 +316,7 @@ res.redirect("/nao-permitido");
 
 
 app.get("/nova-doacao/:idCampanha", (req, res) => {
-  if (req.session.adm) {
+  if (req.session.loggedin) {
     const idCampanha = req.params.idCampanha;
     console.log("ID CAMPANHA: " + JSON.stringify(idCampanha));
     console.log("GET /nova-doacao");
@@ -353,7 +353,7 @@ app.post("/nova-doacao", (req, res) => {
   console.log("POST /nova-doacao");
   // Pegar dados da postagem: User ID, Titulo, Conteudo, Data da Postagem
   //req.session.username, req.session.id
-  if (req.session.adm) {
+  if (req.session.loggedin) {
     const { id_Campanha, id_turma, id_roupa, qtd } = req.body;
     const query = `INSERT INTO Arrecadacoes (id_campanha, id_turma, id_item, qtd, data) VALUES (?, ?, ? , ?, ?)`;
     const data = new Date();
@@ -511,8 +511,8 @@ app.get("/pagUsuarios/:pag", (req, res) => {
     res.redirect("/nao-permitido");
   }
 });
-app.get('/desativarusuarios/:id_username', (req, res) => {
-    console.log("GET/desativarusuarios")
+app.get('/desativarUsuario/:id_username', (req, res) => {
+    console.log("GET/desativarUsuario")
     if(req.session.adm){
     const id_username = req.params.id_username;
     const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
@@ -523,8 +523,8 @@ app.get('/desativarusuarios/:id_username', (req, res) => {
     })
     }});
 
-    app.get('/ReativarItem/:id_username', (req, res) => {
-  console.log("GET/Reativarusuario")
+    app.get('/reativarUsuario/:id_username', (req, res) => {
+  console.log("GET/reativarUsuario")
   if(req.session.adm){
   const id_username = req.params.id_username;
   const query = 'UPDATE users SET Ativo = 1 WHERE id = ?; '
@@ -542,6 +542,25 @@ app.get("/addUsuario", (req, res) => {
       titulo: "Adicionar Usuario",
       req: req,
     });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
+app.post("/addUsuario", (req, res) => {
+  console.log("POST /addUsuario");
+  if (req.session.adm) {
+    const { username, password } = req.body;
+    console.log(`NOME: ${username}`);
+    console.log(`SENHA: ${password}`)
+    const query = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
+    db.get(query, [username, password],(err, row) => {
+        if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+        //1. Verificar se o usuário existe
+        res.redirect("/pagUsuarios/1");
+      })
+    
   } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
