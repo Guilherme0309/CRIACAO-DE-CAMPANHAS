@@ -288,9 +288,10 @@ app.get('/desativarItem/:idCampanha/:idItem', (req, res) => {
     const idCampanha = req.params.idCampanha;
     const idItem = req.params.idItem;
     const query = 'UPDATE Itens_Pontuacoes SET Ativo = 0 WHERE id = ?; '
+    var pag = Math.ceil(idItem/5);
     db.all(query, [idItem], (err, row) => {
       if (err) throw err;
-      res.redirect(`/editItens/${idCampanha}/1`);
+      res.redirect(`/editItens/${idCampanha}/${pag}`);
     });
   } else{
     tituloError = "Não Permitido";
@@ -304,9 +305,10 @@ app.get('/ReativarItem/:idCampanha/:idItem', (req, res) => {
   const idCampanha = req.params.idCampanha;
   const idItem = req.params.idItem;
   const query = 'UPDATE Itens_Pontuacoes SET Ativo = 1 WHERE id = ?; '
+  var pag = Math.ceil(idItem/5);
   db.all(query, [idItem], (err, row) => {
     if (err) throw err;
-    res.redirect(`/editItens/${idCampanha}/1`);
+    res.redirect(`/editItens/${idCampanha}/${pag}`);
   });
 } else{
   tituloError = "Não Permitido";
@@ -516,10 +518,11 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
     if(req.session.adm){
     const id_username = req.params.id_username;
     const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
+    var pag = Math.ceil(id_username/5);
     db.all(query, [id_username], (err, row) => {
       if (err) throw err;
       console.log("usuario desativado");
-      res.redirect(`/pagUsuarios/1`);
+      res.redirect(`/pagUsuarios/${pag}`);
     })
     }});
 
@@ -528,9 +531,10 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
   if(req.session.adm){
   const id_username = req.params.id_username;
   const query = 'UPDATE users SET Ativo = 1 WHERE id = ?; '
+  var pag = Math.ceil(id_username/5);
   db.all(query, [id_username], (err, row) => {
     if (err) throw err;
-    res.redirect(`/pagUsuarios/1`);
+    res.redirect(`/pagUsuarios/${pag}`);
   })
 }});
     
@@ -592,14 +596,60 @@ app.get("/pagTurmas/:pag", (req, res) => {
 app.get('/desativarturmas/:id_turma', (req, res) => {
     console.log("GET/desativarturmas")
     if(req.session.adm){
-    const id_username = req.params.id_username;
-    const query = 'UPDATE Turmas SET Ativo = 0 WHERE id = ?; '
-    db.all(query, [id_turmas], (err, row) => {
+    const id_turma = req.params.id_turma;
+    const query = 'UPDATE Turmas SET Ativo = 0 WHERE id_turma = ?; ';
+    var pag = Math.ceil(id_turma/5); 
+    db.all(query, [id_turma], (err, row) => {
       if (err) throw err;
       console.log("Turma desativada");
-      res.redirect(`/pagTurmas/1`);
+      res.redirect(`/pagTurmas/${pag}`);
     })
     }});
+
+    app.get('/reativarturmas/:id_turma', (req, res) => {
+      console.log("GET/reativarturmas")
+      if(req.session.adm){
+      const id_turma = req.params.id_turma;
+      const query = 'UPDATE Turmas SET Ativo = 1 WHERE id_turma = ?; ';
+      var pag = Math.ceil(id_turma/5); 
+      db.all(query, [id_turma], (err, row) => {
+        if (err) throw err;
+        console.log("Turma Ativada");
+        res.redirect(`/pagTurmas/${pag}`);
+      })
+      }});
+
+      app.get("/addTurma", (req, res) => {
+        console.log("GET /addTurma");
+        if (req.session.adm) {
+          res.render("pages/addTurma", {
+            titulo: "Adicionar Turma",
+            req: req,
+          });
+        } else {
+          tituloError = "Não Permitido";
+          res.redirect("/nao-permitido");
+        }
+      });
+      
+      app.post("/addTurma", (req, res) => {
+        console.log("POST /addTurma");
+        if (req.session.adm) {
+          const { sigla, docente } = req.body;
+          console.log(`SIGLA: ${sigla}`);
+          console.log(`DOCENTE: ${docente}`)
+          const query = 'INSERT INTO Turmas (sigla, docente, ativo) VALUES (?,?,1)';
+          db.get(query, [sigla, docente],(err, row) => {
+              if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+              //1. Verificar se o usuário existe
+              res.redirect("/pagTurmas/1");
+            })
+          
+        } else {
+          tituloError = "Não Permitido";
+          res.redirect("/nao-permitido");
+        }
+      });
 
 app.get("/nao-permitido", (req, res) => {
   console.log("GET /nao-permitido");

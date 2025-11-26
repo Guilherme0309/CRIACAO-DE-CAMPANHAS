@@ -22,7 +22,20 @@
               Desativado     
               <% }%>
           </td>
-          <td><a href=/desativarturmas/<%=dados[i].id_turma%>>Desativar Turma</a></td>
+          <td>
+            <% if (dados[i].ativo == 1) {%>
+              <a href=/desativarturmas/<%=dados[i].id_turma%> 
+                onclick="return confirm('Tem Certeza Que Deseja Desativar a Turma?');">
+                Desativar Turma
+              </a>
+            </td>
+              <% } else {%>
+                <a href=/reativarturmas/<%=dados[i].id_turma%>
+                  onclick="return confirm('Tem Certeza Que Deseja Reativar a Turma?');">
+                  Reativar Turma
+                </a>
+              </td>   
+              <% }%>
         </tr>
          <% } %>
          <% } %>
