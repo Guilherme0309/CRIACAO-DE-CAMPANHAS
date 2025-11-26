@@ -15,8 +15,14 @@
         <tr>
           <td><%= dados[i].sigla %></td>
           <td><%= dados[i].docente %></td>
-          <td><%= dados[i].ativo %></td>
-          <td><a href=/desativarturmas/<%=dados.id%>>Desativar Turma</a></td>
+          <td>
+            <% if (dados[i].ativo == 1) {%>
+              Ativo
+              <% } else {%>
+              Desativado     
+              <% }%>
+          </td>
+          <td><a href=/desativarturmas/<%=dados[i].id_turma%>>Desativar Turma</a></td>
         </tr>
          <% } %>
          <% } %>

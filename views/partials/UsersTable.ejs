@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th>NOME USUARIO</th>
+      <th>SENHA</th>
       <th>TIPO DE PERFIL</th>
       <th>ATIVO</th>
       <th>DESATIVAR</th>
@@ -14,15 +15,25 @@
         <% if (i < dados.length) { %>
         <tr>
           <td><%= dados[i].username %></td>
+          <td><%= dados[i].password %></td>
           <td><%= dados[i].tipo_perfil %></td>
-          <td><%= dados[i].Ativo %></td>
-          <td><% if (dados[i].Ativo == 1) {%>
-          <a href="/desativarusuarios/<%=dados[i].id%>>Desativar Perfil"
-          onclick="return confirm('Tem Certeza Que Deseja Desativar o Perfil?');">
-                    Desativar Item
+          <td>
+            <% if (dados[i].ativo == 1) {%>
+              Ativo
+              <% } else {%>
+              Desativado     
+              <% }%>
+          </td>
+          <td>
+            <% if (dados[i].tipo_perfil == 'ADM') {%>
+                Seu Perfil
+              <% } else if (dados[i].ativo == 1) {%>
+          <a href="/desativarUsuario/<%=dados[i].id%>"
+             onclick="return confirm('Tem Certeza Que Deseja Desativar o Perfil?');">
+             Desativar Perfil
           </a>
           <% } else {%>
-                <a href="/reativarusuario/<%=dados[i].id%>>Reativar Perfil" 
+                <a href="/reativarUsuario/<%=dados[i].id%>" 
                   onclick="return confirm('Tem Certeza Que Deseja Reativar o Perfil?');">
                     Reativar Perfil
               <% }%>
