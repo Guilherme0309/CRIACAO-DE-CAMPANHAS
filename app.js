@@ -298,6 +298,22 @@ app.get('/desativarItem/:idCampanha/:idItem', (req, res) => {
   }
 });
 
+app.get('/ReativarItem/:idCampanha/:idItem', (req, res) => {
+  console.log("GET/ReativarCampanha")
+  if(req.session.adm){
+  const idCampanha = req.params.idCampanha;
+  const idItem = req.params.idItem;
+  const query = 'UPDATE Itens_Pontuacoes SET Ativo = 1 WHERE id = ?; '
+  db.all(query, [idItem], (err, row) => {
+    if (err) throw err;
+    res.redirect(`/editItens/${idCampanha}/1`);
+  });
+} else{
+  tituloError = "Não Permitido";
+res.redirect("/nao-permitido");
+}
+});
+
 
 app.get("/nova-doacao/:idCampanha", (req, res) => {
   if (req.session.adm) {

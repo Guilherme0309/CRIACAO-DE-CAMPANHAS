@@ -12,7 +12,11 @@
        <% let i = qtd_posts-5; for (i = qtd_posts-5 ; i< qtd_posts; i++) {%>
         <% if (i < dados.length) {%>
         <tr>
-          <td><%= dados[i].Descricao %></td>
+          <td><%= dados[i].Descricao %> 
+            <% if (dados[i].Ativo == 0) {%>
+              (Desativado)
+            <% } %>
+          </td>
           <td><%= dados[i].Pontos %></td>
           <td><% if (dados[i].Ativo == 1) {%>
               <a href="/desativarItem/<%= idCampanha%>/<%=dados[i].id%>" 
@@ -20,7 +24,9 @@
                 Desativar Item
               </a>
               <% } else {%>
-                <b>Item ja Desativado</b>
+                <a href="/reativarItem/<%= idCampanha%>/<%=dados[i].id%>" 
+                  onclick="return confirm('Tem Certeza Que Deseja Reativar o Item?');">
+                    Reativar Item
               <% }%>
               </td>
         </tr>
