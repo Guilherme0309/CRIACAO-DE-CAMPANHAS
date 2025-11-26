@@ -12,13 +12,12 @@
     <br><br>
     <main>
         <center>
-            <form action="/addUser" method="post" class="formItens"
+            <form action="/addUsuario" method="post" class="formItens"
             onsubmit="
             const nome_usuario = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const ddlUser = document.getElementById('DdlTipoUser').value;
         
-        if (!ddlUser ||!nome_usuario || !password) {
+        if (!nome_usuario || !password) {
           alert('Preencha Todos os Campos para Postar a Campanha!');
           return false;
         }
@@ -46,19 +45,6 @@
                             <img src="../../static/olhoAberto.png" alt="Ver senha" width="45px">
                           </button>
                           
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Tipo de Usuário:</b>
-                    </td>
-                    <td>
-                        <br>
-                        <select id="DdlTipoUser" style="width: 200px;">
-                            <option value="">[Escolha]</option>
-                            <option value="ADM">ADMINISTRADOR</option>
-                            <option value="DCT">DOCENTE</option>
-                          </select>
                     </td>
                 </tr>
             </table>

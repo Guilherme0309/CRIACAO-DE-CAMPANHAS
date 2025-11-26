@@ -525,6 +525,19 @@ app.get("/addUsuario", (req, res) => {
   }
 });
 
+app.post("/addUsuario", (req, res) => {
+  console.log("POST /addUsuario");
+  if (req.session.adm) {
+    const { username, password } = req.body;
+    console.log(`NOME: ${username}`);
+    console.log(`SENHA: ${password}`)
+    res.redirect("/pagUsuarios/1");
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
 app.get("/pagTurmas/:pag", (req, res) => {
   if (req.session.adm) {
     console.log("GET /PagTurmas");
