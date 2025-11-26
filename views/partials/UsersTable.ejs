@@ -15,12 +15,23 @@
         <tr>
           <td><%= dados[i].username %></td>
           <td><%= dados[i].tipo_perfil %></td>
-          <td><%= dados[i].ativo %></td>
-          <td><a href=/dadosDaTurma/<%=dados.id%>>Desativar Perfil</a></td>
+          <td><%= dados[i].Ativo %></td>
+          <td><% if (dados[i].Ativo == 1) {%>
+          <a href="/desativarusuarios/<%=dados[i].id%>>Desativar Perfil"
+          onclick="return confirm('Tem Certeza Que Deseja Desativar o Perfil?');">
+                    Desativar Item
+          </a>
+          <% } else {%>
+                <a href="/reativarusuario/<%=dados[i].id%>>Reativar Perfil" 
+                  onclick="return confirm('Tem Certeza Que Deseja Reativar o Perfil?');">
+                    Reativar Perfil
+              <% }%>
+              </td>
         </tr>
         <% } %>
         <% } %>
         </tbody>
+        
     <tfoot>
       <tr>
           <td colspan="5">
