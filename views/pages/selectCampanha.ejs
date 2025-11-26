@@ -7,43 +7,29 @@
 
 <body>
     <%- include("../partials/menu") %>
-    <!-- Inclui o menu padrão do sistema (menu.ejs) -->
-
     <% console.log ('Dados: ' + dados)%>
-    
-
-    <!-- Botão de voltar para a página inicial do ADM -->
-    <a href="/pagInicialADM">
-        <img src="../../static/voltar.png" alt="Voltar" width="3%">
-    </a>
-
-    
+    <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%"></a>
     <center><h1>SELECIONAR CAMPANHA</h1></center>
 
     <br><br>
     <main>
         <center>
-            <% if (!dados || dados.length === 0)  { %>
-                <!-- Caso não existam campanhas criadas -->
-                Nenhuma Campanha Criada
-            <% } else { %>
-                <!-- Caso existam campanhas, renderiza um <select> com as opções -->
+        <% if (!dados || dados.length === 0)  {%>
+            Nenhuma Campanha Criada
+        <% } else {%>
                 <select name="qtd" id="qtd" style="width: 200px;">
                     <option value="">[Escolha]</option>
                     <% dados.forEach(dado => { %>
-                        <option value="<%= dado %>"><%= dado %></option>
+                        <option value="<%= dado.id_Campanha %>"><%= dado.nome_Campanha %></option>
                     <% }) %>
                 </select>
+
             <% } %>
 
             <br><br>
-
-            <% if (req.session.adm) { %>
-                <!-- Se o usuário logado for ADM, exibe botão para criar nova campanha -->
-                <a href="/novaCampanha">
-                    <button>CRIAR NOVA CAMPANHA</button>
-                </a>
-            <% } %>  
+        <% if (req.session.adm){ %>
+            <a href="/novaCampanha"><button>CRIAR NOVA CAMPANHA</button></a>
+        <% } %>  
         </center>
     </main>
 

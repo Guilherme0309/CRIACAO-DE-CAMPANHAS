@@ -7,14 +7,8 @@
 <body>
   <!-- Inclui o menu de navegação -->
   <%- include("../partials/menu") %>
-  
-  
   <br><br>
-
-  <!-- Botão de voltar (link para /tabGeral/1) -->
-  <a href="/tabGeral/1">
-    <img src="../../static/voltar.png" width="40px" style="margin: 10px;">
-  </a>
+  <a href="/tabGeral/1"><img src="../../static/voltar.png" width="40px" / style="margin: 10px;"></a>
   <br>
 
  
@@ -38,23 +32,18 @@
           </thead>
 
           <tbody>
-            <!-- Loop pelas roupas cadastradas -->
-            <% let i = 0; for (i = 0; i < roupas.length; i++) { %>
+            <% let i = 0; for (i = 0; i< roupas.length; i++) {%>
             <tr>
-              <!-- Coluna: descrição da roupa + pontos atribuídos por unidade -->
-              <td><%= roupas[i].Descricao %> - <%= roupas[i].Pontos %> Pontos</td>
-
-              <!-- Coluna: quantidade arrecadada da roupa -->
+              <td><%= roupas[i].Descricao %> - <%= roupas[i].Pontos%> Pontos</td>
               <td>
-                <!-- Inicializa contador da quantidade -->
+                <!-- FAZ A SOMA CASO EXISTAM MAIS ARRECADAÇÕES DE UMA MESMA ROUPA -->
                 <% let qtd_roupas = 0 %>
-                <!-- Soma todas as arrecadações que tenham a mesma descrição da roupa -->
-                <% for (let x = 0; x < dados.length; x++) { %>
-                  <% if (roupas[i].Descricao == dados[x].Descricao) { %>
-                    <% qtd_roupas += Number(dados[x].qtd) %>
-                  <% } %>
+                <% for (let x = 0; x < dados.length; x++) {%>
+                <% if (roupas[i].Descricao == dados[x].Descricao) {%>
+                <% qtd_roupas += Number(dados[x].qtd) %>
                 <% } %>
-                <!-- Exibe a quantidade total arrecadada dessa roupa -->
+                <% } %>
+                <!-- EXIBE QTD ROUPAS -->
                 <%= qtd_roupas %>
               </td>
 
@@ -62,13 +51,12 @@
               <td>
                 <!-- Inicializa contador de pontos -->
                 <% let qtd_pontos = 0 %>
-                <!-- Soma os pontos de todas as arrecadações da mesma roupa -->
-                <% for (let x = 0; x < dados.length; x++) { %>
-                  <% if (roupas[i].Descricao == dados[x].Descricao) { %>
-                    <% qtd_pontos += Number(dados[x].Pontos) %>
-                  <% } %>
+                <% for (let x = 0; x < dados.length; x++) {%>
+                <% if (roupas[i].Descricao == dados[x].Descricao) {%>
+                <% qtd_pontos += Number(dados[x].Pontos) %>
                 <% } %>
-                <!-- Exibe os pontos totais dessa roupa -->
+                <% } %>
+                <!-- EXIBE QTD ROUPAS -->
                 <%= qtd_pontos %>
               </td>
             </tr>
@@ -76,13 +64,11 @@
           </tbody>
 
           <tfoot>
-            <!-- Rodapé da tabela mostrando a soma total de pontos -->
             <td colspan="4">
               PONTOS GANHOS:
               <% let total_pontos = 0 %>
-              <!-- Soma os pontos de todas as arrecadações -->
-              <% for (let x = 0; x < dados.length; x++) { %>
-                <% total_pontos += Number(dados[x].Pontos) %>
+              <% for (let x = 0; x < dados.length; x++) {%>
+              <% total_pontos += Number(dados[x].Pontos) %>
               <% } %>
               <!-- Exibe o total de pontos -->
               <%= total_pontos %>

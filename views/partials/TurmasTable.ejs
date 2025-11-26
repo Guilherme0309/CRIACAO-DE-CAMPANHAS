@@ -1,37 +1,34 @@
 <table>
   <thead>
     <tr>
-      <th>POSIÇÃO</th>
-      <th>SALA</th>
+      <th>SIGLA TURMA</th>
       <th>DOCENTE</th>
-      <th>PONTOS</th>
-      <th>LINK DA SALA</th>
+      <th>ATIVO</th>
+      <th>DESATIVAR</th>
     </tr>
   </thead>
   <tbody>
     <% let qtd_posts = pag*5 %>
-
     <!-- LISTAGEN DE 5 em 5 POSTS -->
-      <% let i = qtd_posts-5; for (i = qtd_posts-5 ; i< qtd_posts; i++) {%>
+       <% let i = qtd_posts-5; for (i = qtd_posts-5 ; i< qtd_posts; i++) {%>
         <% if (i < dados.length) {%>
         <tr>
-          <td><%= i + 1 %>°</td>
           <td><%= dados[i].sigla %></td>
           <td><%= dados[i].docente %></td>
-          <td><%= dados[i].totalPontos %></td>
-          <td><a href="/dadosDaTurma/<%=dados[i].id_turma%>/<%=idCampanha%>">Dados da Turma</a></td>
+          <td><%= dados[i].ativo %></td>
+          <td><a href=/dadosDaTurma/<%=dados.id%>>Desativar Turma</a></td>
         </tr>
-        <% } %>
-        <% } %>
+         <% } %>
+         <% } %>
         </tbody>
     <tfoot>
       <tr>
           <td colspan="5">
           <% if (pag > 1) {%>
-          <a href="/tabGeral/<%=idCampanha%>/<%= Number(pag) - 1 %>">⬅</a>
+          <a href="/pagTurmas/<%= Number(pag) - 1 %>">⬅</a>
           <% } %>
           <% if (qtd_posts < dados.length) {%>
-          <a href="/tabGeral/<%=idCampanha%>/<%= Number(pag) + 1  %>">⮕</a>
+          <a href="/pagTurmas/<%= Number(pag) + 1  %>">⮕</a>
           <% } %>
         </td>
       </tr>

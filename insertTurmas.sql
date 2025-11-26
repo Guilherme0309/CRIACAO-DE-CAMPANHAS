@@ -26,3 +26,10 @@ INSERT INTO Turmas (sigla, docente, ativo) VALUES
 ('I2HS', 'ANA', 1),
 ('N1I', 'MARILIA', 1),
 ('N3F', 'EVANDRO', 1);
+
+INSERT INTO users (username, password, ativo, tipo_perfil) VALUES
+('Admin', 'admin123', 1, 'ADM');
+
+DELETE FROM Campanhas Where id_Campanha = 1;
+
+UPDATE Itens_Pontuacoes SET Descricao = 'Roupa de Cama' WHERE id = 6;

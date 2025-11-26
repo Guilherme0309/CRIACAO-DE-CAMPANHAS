@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head") %>
+
+<body>
+    <%- include("../partials/menu") %>
+
+    <% if (req.session.adm){ %>
+    <a href="/pagInicialCampanha/<%= idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+    <% } %>   
+    <main id="MainDash">
+    <center>
+    <%- include("../partials/ItensTable") %>
+    <br>
+    <a href="/addItem/<%= idCampanha%>"><button style="margin-top: 20px;">ADICIONAR ITEM</button></a>
+    <br>
+    <br>
+    </center>
+    </main>
+    <%- include("../partials/footer") %>
+</body>
+
+</html>

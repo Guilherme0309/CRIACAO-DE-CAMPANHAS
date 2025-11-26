@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head") %>
+
+<body>
+    <%- console.log(dados) %>
+    <%- include("../partials/menu") %>
+    <% if (req.session.adm){ %>
+        <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+    <% } %> 
+    <main id="MainDash">
+        <center>
+        <%- include("../partials/UsersTable") %>
+    </center>
+    <br>
+    <center>
+    <a href="/addUsuario"><button>NOVO USUARIO</button></a>
+    </center>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+
+</html>

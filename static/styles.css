@@ -137,10 +137,6 @@ table tbody tr {
   border-bottom: 1px solid #dddddd;
 }
 
-table tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
 table td {
   padding: 12px 15px;
 }
@@ -159,22 +155,27 @@ table tfoot a {
   border-radius: 3px;
   font-size: 29px;
 }
-
-table tfoot a:hover {
-  background-color: #112553;
-}
 }
 
-#listaTarefas{
+#listaItens{
   li {
-    background: #ea4921;
+    background: #112553;
     color: white;
     padding: 15px;
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
     border-radius: 5px;
     max-width: 550px;
-}}
+}
+
+  button{
+    background-color: red;
+    cursor: pointer;
+
+    &:hover{
+      background-color: rgb(163, 0, 0);
+    }
+  }
+}
