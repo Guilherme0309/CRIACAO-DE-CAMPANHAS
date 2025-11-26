@@ -511,6 +511,29 @@ app.get("/pagUsuarios/:pag", (req, res) => {
     res.redirect("/nao-permitido");
   }
 });
+app.get('/desativarusuarios/:id_username', (req, res) => {
+    console.log("GET/desativarusuarios")
+    if(req.session.adm){
+    const id_username = req.params.id_username;
+    const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
+    db.all(query, [id_username], (err, row) => {
+      if (err) throw err;
+      console.log("usuario desativado");
+      res.redirect(`/pagUsuarios/1`);
+    })
+    }});
+
+    app.get('/ReativarItem/:id_username', (req, res) => {
+  console.log("GET/Reativarusuario")
+  if(req.session.adm){
+  const id_username = req.params.id_username;
+  const query = 'UPDATE users SET Ativo = 1 WHERE id = ?; '
+  db.all(query, [id_username], (err, row) => {
+    if (err) throw err;
+    res.redirect(`/pagUsuarios/1`);
+  })
+}});
+    
 
 app.get("/addUsuario", (req, res) => {
   console.log("GET /addUsuario");
@@ -559,6 +582,18 @@ app.get("/pagTurmas/:pag", (req, res) => {
     res.redirect("/nao-permitido");
   }
 });
+
+app.get('/desativarturmas/:id_turma', (req, res) => {
+    console.log("GET/desativarturmas")
+    if(req.session.adm){
+    const id_username = req.params.id_username;
+    const query = 'UPDATE Turmas SET Ativo = 0 WHERE id = ?; '
+    db.all(query, [id_turmas], (err, row) => {
+      if (err) throw err;
+      console.log("Turma desativada");
+      res.redirect(`/pagTurmas/1`);
+    })
+    }});
 
 app.get("/nao-permitido", (req, res) => {
   console.log("GET /nao-permitido");
