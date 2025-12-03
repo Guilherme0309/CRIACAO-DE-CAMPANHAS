@@ -267,13 +267,19 @@ app.post('/addItem/:id', (req, res) => {
     const { descricao, DdlPontos } = req.body;
     console.log(`Descrição: ${descricao}`);
     console.log(`Pontos: ${DdlPontos}`);
-
-    const query = 'INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES (?,?,?,1)';
-    db.get(query, [descricao, DdlPontos, idCampanha],(err, row) => {
+    const query1 = 'SELECT * FROM Itens_Pontuacoes WHERE descricao = ? AND id_Campanha = ?'
+    db.all(query1, [descricao, idCampanha], (err,row) => {
+      if (row){
+        res.send(`Esse item ja existe <a href="/addItem/${idCampanha}">Voltar</a>`);
+      } else{
+        const query2 = 'INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES (?,?,?,1)';
+        db.get(query2, [descricao, DdlPontos, idCampanha],(err, row) => {
         if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
         //1. Verificar se o usuário existe
         res.redirect(`/editItens/1/${idCampanha}`);
       })
+      }
+    })
     
     } else{
       tituloError = "Não Permitido";
@@ -542,9 +548,9 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
 app.get("/addUsuario", (req, res) => {
   console.log("GET /addUsuario");
   if (req.session.adm) {
-    res.render("pages/addUser", {
-      titulo: "Adicionar Usuario",
-      req: req,
+      res.render("pages/addUser", {
+        titulo: "Adicionar Usuario",
+        req: req
     });
   } else {
     tituloError = "Não Permitido";
@@ -558,12 +564,21 @@ app.post("/addUsuario", (req, res) => {
     const { username, password } = req.body;
     console.log(`NOME: ${username}`);
     console.log(`SENHA: ${password}`)
-    const query = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
-    db.get(query, [username, password],(err, row) => {
+
+    const query1 = 'SELECT * FROM users WHERE username = ?';
+    db.all(query1, [username], (err, row) => {
+      if (err) throw err; 
+      if (row){
+        return res.send("Esse nome de usuário já existe <a href='/addUsuario'>Voltar</a>");
+      } else{
+        const query2 = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
+        db.run(query2, [username, password],(err, row) => {
         if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
         //1. Verificar se o usuário existe
         res.redirect("/pagUsuarios/1");
       })
+      }
+    });
     
   } else {
     tituloError = "Não Permitido";
@@ -638,13 +653,19 @@ app.get('/desativarturmas/:id_turma', (req, res) => {
           const { sigla, docente } = req.body;
           console.log(`SIGLA: ${sigla}`);
           console.log(`DOCENTE: ${docente}`)
+          const query1 = "SELECT * FROM Turmas WHERE sigla = ?"
+          db.all(query1, [sigla], (err, row) => {
+          if (row){
+            return res.send("Essa nome de Turma já existe <a href='/addTurma'>Voltar</a>");
+          } else {
           const query = 'INSERT INTO Turmas (sigla, docente, ativo) VALUES (?,?,1)';
           db.get(query, [sigla, docente],(err, row) => {
               if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
               //1. Verificar se o usuário existe
               res.redirect("/pagTurmas/1");
-            })
-          
+            });
+          }
+          });
         } else {
           tituloError = "Não Permitido";
           res.redirect("/nao-permitido");
