@@ -4,45 +4,57 @@
 <%- include("../partials/head") %>
 
 <body>
-    <%- include("../partials/menu") %>
-    <% console.log ('Dados: ' + JSON.stringify(dados))%>
-    <% if (req.session.adm){ %>
-    <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
-    <% } %> 
-    <center><h1>SELECIONAR CAMPANHA</h1></center>
-    <br><br>
-    <main>
-        <center>
-        <% if (!dados || dados.length === 0)  {%>
-            Nenhuma Campanha Criada
-        <% } else {%>
+  <%- include("../partials/menu") %>
+  <% console.log ('Dados: ' + JSON.stringify(dados))%>
+  <% if (req.session.adm){ %>
+  <a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+  <% } %>
+  <center>
+    <h1>SELECIONAR CAMPANHA</h1>
+  </center>
+  <br><br>
+  <main>
+    <center>
+      <% if (!dados || dados.length === 0)  {%>
+      Nenhuma Campanha Criada
+      <% } else {%>
 
-            <form action="/selectCampanha" method="post" onsubmit="
-                const selectedCampanha = document.getElementById('selectedCampanha');
+      <form action="/selectCampanha" method="post" onsubmit="return verificacao()">
 
-                if (!selectedCampanha.value){
-                    alert('Selecione uma Turma para prosseguir!!');
-                    return false;
-                }">
-
-                <select name="selectedCampanha" id="selectedCampanha" style="width: 200px;">
-                    <option value="">[Escolha]</option>
-                    <% dados.forEach(dado => { %>
-                        <option value="<%= dado.id_Campanha %>"><%= dado.nome_Campanha %></option>
-                    <% }) %>
-                </select>
-
+        <select name="selectedCampanha" id="selectedCampanha" style="width: 300px;">
+          <option value="">[Escolha]</option>
+          <% dados.forEach(dado => { %>
+          <option value="<%= dado.id_Campanha %>">
+            <%= dado.nome_Campanha %>
+            <% if (dado.Ativo == 0)  {%>
+             (Encerrada)
             <% } %>
-            <br><br>
-            <button type="submit" id="btnCriar">CONFIRMAR</button>
-        </form>
-        <% if (req.session.adm){ %>
-            <a href="/novaCampanha"><button style="margin: 20px 0;">CRIAR NOVA CAMPANHA</button></a>
-        <% } %>  
-        </center>
-    </main>
+        </option>
+          <% }) %>
+        </select>
 
-    <%- include("../partials/footer") %>
+        <% } %>
+        <br><br>
+        <button type="submit" id="btnCriar">CONFIRMAR</button>
+      </form>
+      <% if (req.session.adm){ %>
+      <a href="/novaCampanha"><button style="margin: 20px 0;">CRIAR NOVA CAMPANHA</button></a>
+      <% } %>
+    </center>
+  </main>
+
+  <script>
+    function verificacao() {
+      const selectedCampanha = document.getElementById('selectedCampanha');
+
+      if (!selectedCampanha.value) {
+        alert('Selecione uma Turma para prosseguir!!');
+        return false;
+      }
+    }
+  </script>
+
+  <%- include("../partials/footer") %>
 </body>
 
 </html>

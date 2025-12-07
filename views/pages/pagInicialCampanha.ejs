@@ -7,16 +7,20 @@
     <%- include("../partials/menu") %>
     <a href="/selectCampanha"><img src="../../static/voltar.png" alt="Voltar" width="2.5%" style="margin: 10px;"></a>
 
-    <center><h1><%= nomeCampanha.toUpperCase()%></h1></center>
+    <center><h1><%= row.nome_Campanha.toUpperCase()%></h1></center>
     <main id="pagInicial">
         <a href="/tabGeral/<%=idCampanha%>/1">TABELA GERAL</a>
-
+        <% if (row.Ativo == 1) { %>
         <% if (req.session.loggedin) { %>
             <a href="/nova-doacao/<%=idCampanha%>">NOVA DOAÇÃO</a>
         <% } %>
 
         <% if (req.session.adm) { %>
         <a href="/editItens/<%=idCampanha%>/1">EDITAR ITENS</a>
+        <a href="/encerrarCampanha/<%=idCampanha%>" style="background-color: rgb(168, 0, 0);" onclick="return confirm('Tem Certeza Que Deseja Encerrar  a Campanha?');">ENCERRAR CAMPANHA</a>
+        <% } %>
+        <% } else {%>
+            <h2>CAMPANHA ENCERRADA</h2>
         <% } %>
         <br>
     </main>
