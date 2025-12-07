@@ -6,53 +6,57 @@
 <%- include("../partials/head") %>
 
 <body>
-    <%- include("../partials/menu") %>
-    <a href="/pagTurmas/1"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
-    <center><h1>NOVO USUÁRIO</h1></center>
-    <br><br>
-    <main>
-        <center>
-            <form action="/addTurma" method="post" class="formItens"
-            onsubmit="
-            const sigla = document.getElementById('sigla').value;
-            const docente = document.getElementById('docente').value;
-        
-        if (!sigla || !docente) {
-          alert('Preencha Todos os Campos para Criar a Turma!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar uma Turma?');" >
-            <table id="tblLogin">
-                <tr>
-                    <td>
-                        <b>Sigla Turma:</b>
-                    </td>
-                    <td>
-                        <input type="text" name="sigla" id="sigla" placeholder="Digite a sigla da turma">
-                    </td>
-                </tr>
-                <tr>
-                    <td><br></td>
-                    <td><br></td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Docente:</b> 
-                    </td>
-                    <td>
-                        <input type="text" id="docente" name="docente" placeholder="Digite o nome do Docente">                       
-                          
-                    </td>
-                </tr>
-            </table>
-            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR TURMA</button>
-                </form>
-            </main>
-        </center>
-        </center>
-    </main>
+  <%- include("../partials/menu") %>
+  <a href="/pagTurmas/1"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+  <center>
+    <h1>NOVO USUÁRIO</h1>
+  </center>
+  <br><br>
+  <main>
+    <center>
+      <form action="/addTurma" method="post" class="formItens" onsubmit="return verificacao()">
+        <table id="tblLogin">
+          <tr>
+            <td>
+              <b>Sigla Turma:</b>
+            </td>
+            <td>
+              <input type="text" name="sigla" id="sigla" placeholder="Digite a sigla da turma" maxlength="5">
+            </td>
+          </tr>
+          <tr>
+            <td><br></td>
+            <td><br></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Docente:</b>
+            </td>
+            <td>
+              <input type="text" id="docente" name="docente" placeholder="Digite o nome do Docente" maxlength="50">
 
-    <%- include("../partials/footer") %>
+            </td>
+          </tr>
+        </table>
+        <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR TURMA</button>
+      </form>
+    </center>
+  </main>
+
+  <script>
+    function verificacao() {
+      const sigla = document.getElementById('sigla').value;
+      const docente = document.getElementById('docente').value;
+
+      if (!sigla || !docente) {
+        alert('Preencha Todos os Campos para Criar a Turma!');
+        return false;
+      }
+      return confirm('Tem Certeza Que Deseja Adicionar uma Turma?');
+    }
+  </script>
+
+  <%- include("../partials/footer") %>
 </body>
 
 </html>

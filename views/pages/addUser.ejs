@@ -6,70 +6,57 @@
 <%- include("../partials/head") %>
 
 <body>
-    <%- include("../partials/menu") %>
-    <a href="/pagUsuarios/1"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
-    <center><h1>NOVO USUÁRIO</h1></center>
-    <br><br>
-    <main>
-        <center>
-            <form action="/addUsuario" method="post" class="formItens"
-            onsubmit="
-            const nome_usuario = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-        
-        if (!nome_usuario || !password) {
-          alert('Preencha Todos os Campos para Criar um Usuario!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar um Usuário?');" >
-            <table id="tblLogin">
-                <tr>
-                    <td>
-                        <b>Nome Usuário:</b>
-                    </td>
-                    <td>
-                        <input type="text" name="username" id="username" placeholder="Digite o nome da Campanha">
-                    </td>
-                </tr>
-                <tr>
-                    <td><br></td>
-                    <td><br></td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Senha:</b> 
-                    </td>
-                    <td>
-                        <input type="password" id="password" name="password" placeholder="Digite a senha do Usuário">                       
-                        <button type="button" onclick="viewSenha()" style="background: none; border: none; cursor: pointer;">
-                            <img src="../../static/olhoAberto.png" alt="Ver senha" width="45px">
-                          </button>
-                          
-                    </td>
-                </tr>
-            </table>
-            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR USUÁRIO</button>
-                </form>
-            </main>
-        </center>
-        </center>
-    </main>
+  <%- include("../partials/menu") %>
+  <a href="/pagUsuarios/1"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+  <center>
+    <h1>NOVO USUÁRIO</h1>
+  </center>
+  <br><br>
+  <main>
+    <center>
+      <form action="/addUsuario" method="post" class="formItens" onsubmit="return verificacao()">
+        <table id="tblLogin">
+          <tr>
+            <td>
+              <b>Nome Usuário:</b>
+            </td>
+            <td>
+              <input type="text" name="username" id="username" placeholder="Digite o nome da Campanha" maxlength="20">
+            </td>
+          </tr>
+          <tr>
+            <td><br></td>
+            <td><br></td>
+          </tr>
+          <tr>
+            <td>
+              <b>Senha:</b>
+            </td>
+            <td>
+              <input type="text" id="password" name="password" placeholder="Digite a senha do Usuário" maxlength="20">
 
-    <script>
-        function viewSenha() {
-          const senha = document.getElementById("password");
-          const icone = document.getElementById("iconeOlho");
-          if (senha.type === "password") {
-            senha.type = "text";
-            icone.src = "../../static/olhoFechado.png"; // troca o ícone
-          } else {
-            senha.type = "password";
-            icone.src = "../../static/olhoAberto.png";
-          }
-        }
-        </script>
+            </td>
+          </tr>
+        </table>
+        <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR USUÁRIO</button>
+      </form>
+    </center>
+  </main>
 
-    <%- include("../partials/footer") %>
+  <script>
+    function verificacao() {
+      const nome_usuario = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (!nome_usuario || !password) {
+        alert('Preencha Todos os Campos para Criar um Usuario!');
+        return false;
+      }
+      return confirm('Tem Certeza Que Deseja Adicionar um Usuário?');
+    }
+  </script>
+
+  <%- include("../partials/footer") %>
 </body>
 
 </html>

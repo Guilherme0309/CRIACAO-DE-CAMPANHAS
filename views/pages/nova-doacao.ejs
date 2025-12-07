@@ -10,18 +10,7 @@
     <center>
         <h1 id="h1Login">NOVA DOAÇÃO</h1>
         <main>
-            <form action="/nova-doacao" method="post" 
-            onsubmit="
-            const id_turma = document.getElementById('id_turma').value;
-            const id_roupa = document.getElementById('id_roupa').value;
-            const qtd = document.getElementById('qtd').value;
-        
-        if (!id_turma || !id_roupa || !qtd) {
-          alert('Preencha Todos os Campos para Postar a Arrecadação!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar uma Arrecadação?');" 
-            class="formItens">
+            <form action="/nova-doacao" method="post" onsubmit="return verificacao()"  class="formItens">
         <table id="tblPost">
             <tr>
                 <td>
@@ -78,6 +67,20 @@
             </form>
         </main>
     </center>
+
+    <script>
+        function verificacao(){
+            const id_turma = document.getElementById('id_turma').value;
+            const id_roupa = document.getElementById('id_roupa').value;
+            const qtd = document.getElementById('qtd').value;
+        
+        if (!id_turma || !id_roupa || !qtd) {
+          alert('Preencha Todos os Campos para Postar a Arrecadação!');
+          return false;
+        }
+        return confirm('Tem Certeza Que Deseja Adicionar uma Arrecadação?');
+        }
+    </script>
 
     <%- include("../partials/footer") %>
 </body>

@@ -3,39 +3,10 @@
 
 <%- include("../partials/head") %>
 
-<style>
-    main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 100px;
-        gap: 30px; /* espaço entre os botões */
-    }
-
-    main a {
-        display: inline-block;
-        background-color: #0b1d80;
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        padding: 15px 0; /* altura do botão */
-        width: 250px; /* mesmo tamanho para todos */
-        text-align: center;
-        border-radius: 50px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    main a:hover {
-        transform: translateY(-3px);
-        box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.4);
-    }
-</style>
-
 <body>
     <%- include("../partials/menu") %>
         
-    <main>
+    <main id="pagInicial">
         <a href="/selectCampanha">CAMPANHAS</a>
         <a href="/pagUsuarios/1">USUARIO</a>
         <a href="/pagTurmas/1">TURMAS</a>

@@ -30,6 +30,6 @@ INSERT INTO Turmas (sigla, docente, ativo) VALUES
 INSERT INTO users (username, password, ativo, tipo_perfil) VALUES
 ('Admin', 'admin123', 1, 'ADM');
 
-DELETE FROM users Where id = 4;
+DELETE FROM Campanhas WHERE id_Campanha = 4;
 
 UPDATE Itens_Pontuacoes SET Descricao = 'Roupa de Cama' WHERE id = 6;

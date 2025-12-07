@@ -12,24 +12,14 @@
     <br><br>
     <main>
         <center>
-            <form action="/novaCampanha" method="post" class="formItens"
-            onsubmit="
-            const id_turmas = document.getElementById('Turmas').value;
-            const nome_campanha = document.getElementById('campanhaname').value;
-            const ItemName = document.getElementById('ItemName')
-        
-        if (!id_turmas || !nome_campanha || !ItemName) {
-          alert('Preencha Todos os Campos para Postar a Campanha!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar uma Campanha?');" >
+            <form action="/novaCampanha" method="post" class="formItens" onsubmit="return verificacao()">
             <table id="tblLogin">
                 <tr>
                     <td>
                         <b>Nome Campanha:</b>
                     </td>
                     <td>
-                        <input type="text" name="campanhaname" id="campanhaname" placeholder="Digite o nome da Campanha">
+                        <input type="text" name="campanhaname" id="campanhaname" placeholder="Digite o nome da Campanha" maxlength="50">
                     </td>
                 </tr>
                 <tr>
@@ -64,7 +54,7 @@
                         Descrição Item: 
                     </td>
                     <td>
-                        <input type="text" id="itemName" placeholder="Digite o nome do Item">
+                        <input type="text" id="inputItemName" placeholder="Digite o nome do Item" maxlength="50">
                     </td>
                 </tr>
                 <tr>
@@ -96,7 +86,30 @@
     </main>
 
     <script>
-        const ItemInput = document.getElementById("itemName");
+
+function verificacao(){
+
+            const nome_campanha = document.getElementById('campanhaname').value;
+            const turmas = document.getElementsByName('Turmas[]');
+            const itens = document.getElementsByName('ItemName[]')
+        
+            let turmasMarcadas = false;
+            
+            for (let t of turmas) {
+            if (t.checked) {
+            turmasMarcadas = true;
+            break;
+            }
+            }
+
+        if (!nome_campanha || !turmasMarcadas || itens.length === 0) {
+          alert('Preencha Todos os Campos para Postar a Campanha!');
+          return false;
+        }
+        return confirm('Tem Certeza Que Deseja Adicionar uma Campanha?');
+        }
+
+        const ItemInput = document.getElementById("inputItemName");
         const selectPontos = document.getElementById("DdlPontos")
         const listaItens = document.getElementById("listaItens");
         const btnItens = document.getElementById("addTask");
@@ -153,6 +166,7 @@
                 AddItem();
             }
         })
+
     </script>
 
     <%- include("../partials/footer") %>

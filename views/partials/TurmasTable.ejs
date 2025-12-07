@@ -42,14 +42,21 @@
         </tbody>
     <tfoot>
       <tr>
-          <td colspan="5">
+          <td colspan="1" style="text-align: center;">
           <% if (pag > 1) {%>
           <a href="/pagTurmas/<%= Number(pag) - 1 %>">⬅</a>
           <% } %>
+          </td>
+          <td colspan="2" style="text-align: center;">
+          <% if (dados.length > 5) {%>
+          <%= pag %>
+          <% } %>
+          </td>
+          <td colspan="1" style="text-align: center;">
           <% if (qtd_posts < dados.length) {%>
           <a href="/pagTurmas/<%= Number(pag) + 1  %>">⮕</a>
           <% } %>
-        </td>
+          </td>
       </tr>
     </tfoot>
     <!-- SE EXISTIREM 5 POSTS OU MENOS -->

@@ -156,10 +156,18 @@ app.post("/selectCampanha", (req, res) => {
 app.get("/pagInicialCampanha/:idCampanha", (req, res) => {
   const idCampanha = req.params.idCampanha;
   if (req.session.loggedin) {
+
+    const query = "SELECT nome_Campanha FROM Campanhas WHERE id_Campanha = ?"
+    db.get(query, [idCampanha], (err, row) => {
+    if (err) throw err;
+    console.log("Nome Campanha: " + JSON.stringify(row))
+
     res.render("pages/pagInicialCampanha", {
       titulo: "Página da Campanha",
       req: req,
       idCampanha: idCampanha,
+      nomeCampanha: row.nome_Campanha
+    });
     });
   } else {
     tituloError = "Não Permitido";
@@ -173,25 +181,17 @@ app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
   const pag = req.params.pag;
   const query =
     "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma ORDER BY totalPontos DESC";
-  const query2 = "SELECT * from Turmas";
 
   db.all(query, [idCampanha], (err, row1) => {
     if (err) throw err;
-
-    db.all(query2, [], (err, row2) => {
-      if (err) throw err;
-
       console.log("DADOS: ", JSON.stringify(row1));
-      //console.log("TURMAS: ", JSON.stringify(row2));
       res.render("pages/tabGeral", {
         titulo: "Arrecadações",
         idCampanha: idCampanha,
         dados: row1,
-        turmas: row2,
         req: req,
         pag: pag,
       });
-    });
   });
 });
 
@@ -329,14 +329,14 @@ app.get("/nova-doacao/:idCampanha", (req, res) => {
     console.log("ID CAMPANHA: " + JSON.stringify(idCampanha));
     console.log("GET /nova-doacao");
     const query =
-      "SELECT tc.id_turma, t.sigla, t.docente FROM TurmasCampanhas tc INNER JOIN Turmas t on t.id_turma = tc.id_turma WHERE id_campanha = ? and ativo = 1";
+      "SELECT t.id_turma, t.sigla, t.docente, tc.id_campanha FROM TurmasCampanhas tc INNER JOIN Turmas t on t.id_turma = tc.id_turma WHERE tc.id_campanha = ? AND t.ativo = 1";
     const query2 =
       "SELECT * FROM Itens_Pontuacoes WHERE id_Campanha = ? and ativo = 1";
 
     // Primeiro obtemos os dados de ambas as tabelasv
     db.all(query, [idCampanha], (err, turmas) => {
       if (err) throw err;
-      console.log(JSON.stringify(turmas));
+      console.log("Turmas Doadoras:" + JSON.stringify(turmas));
 
       db.all(query2, [idCampanha], (err, pontuacoes) => {
         if (err) throw err;
@@ -530,7 +530,11 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
       console.log("usuario desativado");
       res.redirect(`/pagUsuarios/${pag}`);
     })
-    }});
+    } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+    }
+  });
 
     app.get('/reativarUsuario/:id_username', (req, res) => {
   console.log("GET/reativarUsuario")
@@ -542,7 +546,11 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
     if (err) throw err;
     res.redirect(`/pagUsuarios/${pag}`);
   })
-}});
+} else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+}
+});
     
 
 app.get("/addUsuario", (req, res) => {
@@ -566,9 +574,10 @@ app.post("/addUsuario", (req, res) => {
     console.log(`SENHA: ${password}`)
 
     const query1 = 'SELECT * FROM users WHERE username = ?';
-    db.all(query1, [username], (err, row) => {
+    db.get(query1, [username], (err, row) => {
       if (err) throw err; 
       if (row){
+        console.log(row)
         return res.send("Esse nome de usuário já existe <a href='/addUsuario'>Voltar</a>");
       } else{
         const query2 = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
@@ -619,7 +628,11 @@ app.get('/desativarturmas/:id_turma', (req, res) => {
       console.log("Turma desativada");
       res.redirect(`/pagTurmas/${pag}`);
     })
-    }});
+    }else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+  });
 
     app.get('/reativarturmas/:id_turma', (req, res) => {
       console.log("GET/reativarturmas")
@@ -632,7 +645,11 @@ app.get('/desativarturmas/:id_turma', (req, res) => {
         console.log("Turma Ativada");
         res.redirect(`/pagTurmas/${pag}`);
       })
-      }});
+      }else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+    });
 
       app.get("/addTurma", (req, res) => {
         console.log("GET /addTurma");

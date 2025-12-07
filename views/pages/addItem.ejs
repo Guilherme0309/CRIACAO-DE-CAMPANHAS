@@ -1,73 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 
- 
+
 <%- include("../partials/head") %>
 
 <body>
-    <%- include("../partials/menu") %>
-    <a href="/editItens/1/<%= idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
-    <center><h1>NOVO ITEM</h1></center>
-    <br><br>
-    <main>
-        <center>
-            <form action="/addItem/<%= idCampanha%>" method="post" class="formItens"
-            onsubmit="
-            const descricao = document.getElementById('descricao').value;
-            const ddlPontos = document.getElementById('DdlPontos').value;
-        
-        if (!ddlPontos ||!descricao) {
-          alert('Preencha Todos os Campos para adicionar um Item!');
-          return false;
-        }
-        return confirm('Tem Certeza Que Deseja Adicionar um Item?');" >
-            <table id="tblLogin">
-                <tr>
-                    <td style=" text-align: left;">
-                        <br>
-                        Descrição Item: 
-                    </td>
-                    <td>
-                        <input type="text" name="descricao" id="descricao" placeholder="Digite o nome do Item">
-                    </td>
-                </tr>
-                <tr>
-                    <td style=" text-align: left;">
-                        Pontos:
-                    </td>
-                    <td>
-                        <br>
-                        <select name="DdlPontos" id="DdlPontos" style="width: 200px;">
-                            <option value="">[Escolha]</option>
-                            <% let x = 1; for (x = 1 ; x< 100; x++) {%>
-                                <option value="<%= x %>"><%= x %> Pontos</option>
-                            <% } %>
-                          </select>
-                    </td>
-                </tr>
-            </table>
-            <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR ITEM</button>
-                </form>
-            </main>
-        </center>
-        </center>
-    </main>
+  <%- include("../partials/menu") %>
+  <a href="/editItens/1/<%= idCampanha%>"><img src="../../static/voltar.png" alt="Voltar" width="3%" style="margin: 10px;"></a>
+  <center>
+    <h1>NOVO ITEM</h1>
+  </center>
+  <br><br>
+  <main>
+    <center>
+      <form action="/addItem/<%= idCampanha%>" method="post" class="formItens" onsubmit="return verificacao()">
+        <table id="tblLogin">
+          <tr>
+            <td style=" text-align: left;">
+              <br>
+              Descrição Item:
+            </td>
+            <td>
+              <input type="text" name="descricao" id="descricao" placeholder="Digite o nome do Item" maxlength="50">
+            </td>
+          </tr>
+          <tr>
+            <td style=" text-align: left;">
+              Pontos:
+            </td>
+            <td>
+              <br>
+              <select name="DdlPontos" id="DdlPontos" style="width: 200px;">
+                <option value="">[Escolha]</option>
+                <% let x = 1; for (x = 1 ; x< 100; x++) {%>
+                <option value="<%= x %>"><%= x %> Pontos</option>
+                <% } %>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <button type="submit" id="btnCriar" style="margin-bottom: 20px;">ADICIONAR ITEM</button>
+      </form>
+    </center>
+  </main>
 
-    <script>
-        function viewSenha() {
-          const senha = document.getElementById("password");
-          const icone = document.getElementById("iconeOlho");
-          if (senha.type === "password") {
-            senha.type = "text";
-            icone.src = "../../static/olhoFechado.png"; // troca o ícone
-          } else {
-            senha.type = "password";
-            icone.src = "../../static/olhoAberto.png";
-          }
-        }
-        </script>
+  <script>
+    function verificacao() {
 
-    <%- include("../partials/footer") %>
+      const descricao = document.getElementById('descricao').value;
+      const ddlPontos = document.getElementById('DdlPontos').value;
+
+      if (!ddlPontos || !descricao) {
+        alert('Preencha Todos os Campos para adicionar um Item!');
+        return false;
+      }
+      return confirm('Tem Certeza Que Deseja Adicionar um Item?');
+    }
+  </script>
+
+  <%- include("../partials/footer") %>
 </body>
 
 </html>

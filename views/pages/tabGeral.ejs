@@ -15,7 +15,12 @@
     <center>
         <h1 id="h1Login">TABELA GERAL</h1>
         <main id="MainDash">
+        <% if (!dados.length) {%>
+            <br><br>
+           <h2> Nenhuma Doação Registrada até o momento </h2>
+        <% } else{%>
         <%- include("../partials/pointsTable") %>
+        <% }%>
         </main>
     </center>
     <br>
