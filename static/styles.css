@@ -126,6 +126,47 @@ input::placeholder {
   color: #999;
 }
 
+#viewSenha {
+    display: flex;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 5px;   
+    padding: 0;        
+    width: 218px;         
+    height: 42px;         
+    gap: 5px;
+    box-sizing: border-box;
+}
+
+/* Remove borda do input interno */
+#viewSenha input {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: sans-serif;
+    background-color: transparent; /* herdando da div */
+    color: #112553;
+    width: 100%;
+    height: 100%;
+}
+
+/* Botão do olho */
+#viewSenha button {
+    background: none;
+    border: none;
+    padding: 3px;
+    cursor: pointer;
+}
+
+/* Tamanho do ícone */
+#viewSenha img {
+    width: 22px;
+    background: none; 
+    border: none;
+    cursor: pointer;
+}
+
 footer {
   background-color: #112553;
   color: #FFFFFF;

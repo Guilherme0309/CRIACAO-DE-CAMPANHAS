@@ -74,7 +74,7 @@ app.post("/login", (req, res) => {
       //2. Se o usuário existir e a senha é válida no BD, executar o processo de login
       req.session.username = username;
       req.session.loggedin = true;
-      req.session.id_username = row.id;
+      req.session.id_user = row.id;
       if (row.tipo_perfil == "ADM") {
         req.session.adm = true;
         res.redirect("/pagInicialADM");
@@ -159,15 +159,15 @@ app.get("/pagInicialCampanha/:idCampanha", (req, res) => {
 
     const query = "SELECT nome_Campanha FROM Campanhas WHERE id_Campanha = ?"
     db.get(query, [idCampanha], (err, row) => {
-    if (err) throw err;
-    console.log("Nome Campanha: " + JSON.stringify(row))
+      if (err) throw err;
+      console.log("Nome Campanha: " + JSON.stringify(row))
 
-    res.render("pages/pagInicialCampanha", {
-      titulo: "Página da Campanha",
-      req: req,
-      idCampanha: idCampanha,
-      nomeCampanha: row.nome_Campanha
-    });
+      res.render("pages/pagInicialCampanha", {
+        titulo: "Página da Campanha",
+        req: req,
+        idCampanha: idCampanha,
+        nomeCampanha: row.nome_Campanha
+      });
     });
   } else {
     tituloError = "Não Permitido";
@@ -184,14 +184,14 @@ app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
 
   db.all(query, [idCampanha], (err, row1) => {
     if (err) throw err;
-      console.log("DADOS: ", JSON.stringify(row1));
-      res.render("pages/tabGeral", {
-        titulo: "Arrecadações",
-        idCampanha: idCampanha,
-        dados: row1,
-        req: req,
-        pag: pag,
-      });
+    console.log("DADOS: ", JSON.stringify(row1));
+    res.render("pages/tabGeral", {
+      titulo: "Arrecadações",
+      idCampanha: idCampanha,
+      dados: row1,
+      req: req,
+      pag: pag,
+    });
   });
 });
 
@@ -228,98 +228,98 @@ app.get("/arrecadacoes/:pag", (req, res) => {
 
 
 app.get('/editItens/:id/:pag', (req, res) => {
-  
+
   console.log("GET/editItens")
 
-  if(req.session.adm){
+  if (req.session.adm) {
     const idCampanha = req.params.id;
     const pag = req.params.pag;
     const query = 'SELECT * FROM Itens_Pontuacoes WHERE id_Campanha = ?'
     db.all(query, [idCampanha], (err, itens) => {
       if (err) throw err;
       console.log(JSON.stringify(itens));
-      res.render('pages/editItens', {titulo: 'Editar Itens', req: req, pag: pag, idCampanha: idCampanha, dados: itens});
+      res.render('pages/editItens', { titulo: 'Editar Itens', req: req, pag: pag, idCampanha: idCampanha, dados: itens });
     });
-  }else{
+  } else {
     tituloError = "Não Autorizado";
     res.redirect("/nao-autorizado");
-  }  
-  
+  }
+
 });
 
 
 app.get('/addItem/:id', (req, res) => {
-    console.log ('POST /addItem')
+  console.log('POST /addItem')
 
-    if (req.session.adm){
+  if (req.session.adm) {
     const idCampanha = req.params.id;
-    res.render('pages/addItem', {titulo: 'Adicionar Item', req: req, idCampanha: idCampanha});
-    } else{
-      tituloError = "Não Permitido";
+    res.render('pages/addItem', { titulo: 'Adicionar Item', req: req, idCampanha: idCampanha });
+  } else {
+    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
-    }
+  }
 });
 
 app.post('/addItem/:id', (req, res) => {
-  console.log ('POST /addItem')
-  if (req.session.adm){
+  console.log('POST /addItem')
+  if (req.session.adm) {
     const idCampanha = req.params.id;
     const { descricao, DdlPontos } = req.body;
     console.log(`Descrição: ${descricao}`);
     console.log(`Pontos: ${DdlPontos}`);
     const query1 = 'SELECT * FROM Itens_Pontuacoes WHERE descricao = ? AND id_Campanha = ?'
-    db.all(query1, [descricao, idCampanha], (err,row) => {
-      if (row){
+    db.all(query1, [descricao, idCampanha], (err, row) => {
+      if (row) {
         res.send(`Esse item ja existe <a href="/addItem/${idCampanha}">Voltar</a>`);
-      } else{
+      } else {
         const query2 = 'INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES (?,?,?,1)';
-        db.get(query2, [descricao, DdlPontos, idCampanha],(err, row) => {
-        if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
-        //1. Verificar se o usuário existe
-        res.redirect(`/editItens/1/${idCampanha}`);
-      })
+        db.get(query2, [descricao, DdlPontos, idCampanha], (err, row) => {
+          if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+          //1. Verificar se o usuário existe
+          res.redirect(`/editItens/1/${idCampanha}`);
+        })
       }
     })
-    
-    } else{
-      tituloError = "Não Permitido";
+
+  } else {
+    tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
-    }
+  }
 })
 
 
 app.get('/desativarItem/:idCampanha/:idItem', (req, res) => {
-    console.log("GET/DesativarCampanha")
-    if(req.session.adm){
+  console.log("GET/DesativarCampanha")
+  if (req.session.adm) {
     const idCampanha = req.params.idCampanha;
     const idItem = req.params.idItem;
     const query = 'UPDATE Itens_Pontuacoes SET Ativo = 0 WHERE id = ?; '
-    var pag = Math.ceil(idItem/5);
+    var pag = Math.ceil(idItem / 5);
     db.all(query, [idItem], (err, row) => {
       if (err) throw err;
       res.redirect(`/editItens/${idCampanha}/${pag}`);
     });
-  } else{
+  } else {
     tituloError = "Não Permitido";
-  res.redirect("/nao-permitido");
+    res.redirect("/nao-permitido");
   }
 });
 
 app.get('/ReativarItem/:idCampanha/:idItem', (req, res) => {
   console.log("GET/ReativarCampanha")
-  if(req.session.adm){
-  const idCampanha = req.params.idCampanha;
-  const idItem = req.params.idItem;
-  const query = 'UPDATE Itens_Pontuacoes SET Ativo = 1 WHERE id = ?; '
-  var pag = Math.ceil(idItem/5);
-  db.all(query, [idItem], (err, row) => {
-    if (err) throw err;
-    res.redirect(`/editItens/${idCampanha}/${pag}`);
-  });
-} else{
-  tituloError = "Não Permitido";
-res.redirect("/nao-permitido");
-}
+  if (req.session.adm) {
+    const idCampanha = req.params.idCampanha;
+    const idItem = req.params.idItem;
+    const query = 'UPDATE Itens_Pontuacoes SET Ativo = 1 WHERE id = ?; '
+    var pag = Math.ceil(idItem / 5);
+    db.all(query, [idItem], (err, row) => {
+      if (err) throw err;
+      res.redirect(`/editItens/${idCampanha}/${pag}`);
+    });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
 });
 
 
@@ -452,41 +452,52 @@ app.post("/novaCampanha", (req, res) => {
     const { campanhaname, Turmas, ItemName, ItemPontos } = req.body; //Pega os dados enviados do Formulario
     const ativo = 1;
 
-    const query1 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)"; //Insert do Nome da Campanha
-    db.run(query1, [campanhaname, ativo], function (err) {
+    const query1 = "SELECT * FROM Campanhas WHERE nome_Campanha = ?"
+
+    db.get(query1, [campanhaname], (err, row) => {
       if (err) throw err;
-      const id = this.lastID; // ID do registro recém-criado
 
-      console.log("Campanha criada com ID:", id);
-
-      let query2 = "INSERT INTO TurmasCampanhas (id_campanha, id_turma) VALUES";
-      //Insert das Turmas por Campanha
-      Turmas.forEach((turma, i) => {
-        query2 += `(${id} , ${turma} )`; //Valor de Cada Turma selecionada
-        if (i < Turmas.length - 1) query2 += ", ";
-      });
-
-      console.log(query2);
-
-      db.run(query2, [], function (err) {
-        if (err) throw err;
-      });
-
-      let query3 =
-        "INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES";
-      for (let i = 0; i < ItemName.length; i++) {
-        query3 += `( '${ItemName[i]}' , ${ItemPontos[i]}, ${id}, 1)`;
-        if (i < ItemName.length - 1) query3 += ", ";
+      if (row) {
+        res.send("Esse nome de campanha ja existe <a href='/novaCampanha'>Voltar</a>")
       }
-      console.log(query3);
+      else {
+        const query2 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)"; //Insert do Nome da Campanha
+        db.run(query2, [campanhaname, ativo], function (err) {
+          if (err) throw err;
+          const id = this.lastID; // ID do registro recém-criado
 
-      db.run(query3, [], function (err) {
-        if (err) throw err;
-      });
+          console.log("Campanha criada com ID:", id);
 
-      //alert("Campanha Registrada com Sucesso!")
-      res.redirect("/selectCampanha");
-    });
+          let query3 = "INSERT INTO TurmasCampanhas (id_campanha, id_turma) VALUES";
+          //Insert das Turmas por Campanha
+          Turmas.forEach((turma, i) => {
+            query3 += `(${id} , ${turma} )`; //Valor de Cada Turma selecionada
+            if (i < Turmas.length - 1) query3 += ", ";
+          });
+
+          console.log(query3);
+
+          db.run(query2, [], function (err) {
+            if (err) throw err;
+          });
+
+          let query4 =
+            "INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES";
+          for (let i = 0; i < ItemName.length; i++) {
+            query4 += `( '${ItemName[i]}' , ${ItemPontos[i]}, ${id}, 1)`;
+            if (i < ItemName.length - 1) query4 += ", ";
+          }
+          console.log(query4);
+
+          db.run(query4, [], function (err) {
+            if (err) throw err;
+          });
+
+          //alert("Campanha Registrada com Sucesso!")
+          res.redirect("/selectCampanha");
+        });
+      }
+    })
   } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
@@ -520,45 +531,52 @@ app.get("/pagUsuarios/:pag", (req, res) => {
   }
 });
 app.get('/desativarUsuario/:id_username', (req, res) => {
-    console.log("GET/desativarUsuario")
-    if(req.session.adm){
+  console.log("GET/desativarUsuario")
+
+  if (req.session.adm) {
     const id_username = req.params.id_username;
-    const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
-    var pag = Math.ceil(id_username/5);
+    const id_userLogado = req.session.id_user;
+
+    if (id_userLogado == id_username) {
+      res.send("Não é Possível Desativar seu Próprio Perfil <a href='/pagUsuarios/1'>Voltar</a>");
+    } else {
+      const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
+      var pag = Math.ceil(id_username / 5);
+      db.all(query, [id_username], (err, row) => {
+        if (err) throw err;
+        console.log("usuario desativado");
+        res.redirect(`/pagUsuarios/${pag}`);
+      })
+    }
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
+
+app.get('/reativarUsuario/:id_username', (req, res) => {
+  console.log("GET/reativarUsuario")
+  if (req.session.adm) {
+    const id_username = req.params.id_username;
+    const query = 'UPDATE users SET Ativo = 1 WHERE id = ?; '
+    var pag = Math.ceil(id_username / 5);
     db.all(query, [id_username], (err, row) => {
       if (err) throw err;
-      console.log("usuario desativado");
       res.redirect(`/pagUsuarios/${pag}`);
     })
-    } else {
+  } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
-    }
-  });
-
-    app.get('/reativarUsuario/:id_username', (req, res) => {
-  console.log("GET/reativarUsuario")
-  if(req.session.adm){
-  const id_username = req.params.id_username;
-  const query = 'UPDATE users SET Ativo = 1 WHERE id = ?; '
-  var pag = Math.ceil(id_username/5);
-  db.all(query, [id_username], (err, row) => {
-    if (err) throw err;
-    res.redirect(`/pagUsuarios/${pag}`);
-  })
-} else {
-    tituloError = "Não Permitido";
-    res.redirect("/nao-permitido");
-}
+  }
 });
-    
+
 
 app.get("/addUsuario", (req, res) => {
   console.log("GET /addUsuario");
   if (req.session.adm) {
-      res.render("pages/addUser", {
-        titulo: "Adicionar Usuario",
-        req: req
+    res.render("pages/addUser", {
+      titulo: "Adicionar Usuario",
+      req: req
     });
   } else {
     tituloError = "Não Permitido";
@@ -575,20 +593,20 @@ app.post("/addUsuario", (req, res) => {
 
     const query1 = 'SELECT * FROM users WHERE username = ?';
     db.get(query1, [username], (err, row) => {
-      if (err) throw err; 
-      if (row){
+      if (err) throw err;
+      if (row) {
         console.log(row)
         return res.send("Esse nome de usuário já existe <a href='/addUsuario'>Voltar</a>");
-      } else{
+      } else {
         const query2 = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
-        db.run(query2, [username, password],(err, row) => {
-        if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
-        //1. Verificar se o usuário existe
-        res.redirect("/pagUsuarios/1");
-      })
+        db.run(query2, [username, password], (err, row) => {
+          if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+          //1. Verificar se o usuário existe
+          res.redirect("/pagUsuarios/1");
+        })
       }
     });
-    
+
   } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
@@ -618,76 +636,76 @@ app.get("/pagTurmas/:pag", (req, res) => {
 });
 
 app.get('/desativarturmas/:id_turma', (req, res) => {
-    console.log("GET/desativarturmas")
-    if(req.session.adm){
+  console.log("GET/desativarturmas")
+  if (req.session.adm) {
     const id_turma = req.params.id_turma;
     const query = 'UPDATE Turmas SET Ativo = 0 WHERE id_turma = ?; ';
-    var pag = Math.ceil(id_turma/5); 
+    var pag = Math.ceil(id_turma / 5);
     db.all(query, [id_turma], (err, row) => {
       if (err) throw err;
       console.log("Turma desativada");
       res.redirect(`/pagTurmas/${pag}`);
     })
-    }else {
+  } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
-  });
+});
 
-    app.get('/reativarturmas/:id_turma', (req, res) => {
-      console.log("GET/reativarturmas")
-      if(req.session.adm){
-      const id_turma = req.params.id_turma;
-      const query = 'UPDATE Turmas SET Ativo = 1 WHERE id_turma = ?; ';
-      var pag = Math.ceil(id_turma/5); 
-      db.all(query, [id_turma], (err, row) => {
-        if (err) throw err;
-        console.log("Turma Ativada");
-        res.redirect(`/pagTurmas/${pag}`);
-      })
-      }else {
+app.get('/reativarturmas/:id_turma', (req, res) => {
+  console.log("GET/reativarturmas")
+  if (req.session.adm) {
+    const id_turma = req.params.id_turma;
+    const query = 'UPDATE Turmas SET Ativo = 1 WHERE id_turma = ?; ';
+    var pag = Math.ceil(id_turma / 5);
+    db.all(query, [id_turma], (err, row) => {
+      if (err) throw err;
+      console.log("Turma Ativada");
+      res.redirect(`/pagTurmas/${pag}`);
+    })
+  } else {
     tituloError = "Não Permitido";
     res.redirect("/nao-permitido");
   }
+});
+
+app.get("/addTurma", (req, res) => {
+  console.log("GET /addTurma");
+  if (req.session.adm) {
+    res.render("pages/addTurma", {
+      titulo: "Adicionar Turma",
+      req: req,
     });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
 
-      app.get("/addTurma", (req, res) => {
-        console.log("GET /addTurma");
-        if (req.session.adm) {
-          res.render("pages/addTurma", {
-            titulo: "Adicionar Turma",
-            req: req,
-          });
-        } else {
-          tituloError = "Não Permitido";
-          res.redirect("/nao-permitido");
-        }
-      });
-      
-      app.post("/addTurma", (req, res) => {
-        console.log("POST /addTurma");
-        if (req.session.adm) {
-          const { sigla, docente } = req.body;
-          console.log(`SIGLA: ${sigla}`);
-          console.log(`DOCENTE: ${docente}`)
-          const query1 = "SELECT * FROM Turmas WHERE sigla = ?"
-          db.all(query1, [sigla], (err, row) => {
-          if (row){
-            return res.send("Essa nome de Turma já existe <a href='/addTurma'>Voltar</a>");
-          } else {
-          const query = 'INSERT INTO Turmas (sigla, docente, ativo) VALUES (?,?,1)';
-          db.get(query, [sigla, docente],(err, row) => {
-              if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
-              //1. Verificar se o usuário existe
-              res.redirect("/pagTurmas/1");
-            });
-          }
-          });
-        } else {
-          tituloError = "Não Permitido";
-          res.redirect("/nao-permitido");
-        }
-      });
+app.post("/addTurma", (req, res) => {
+  console.log("POST /addTurma");
+  if (req.session.adm) {
+    const { sigla, docente } = req.body;
+    console.log(`SIGLA: ${sigla}`);
+    console.log(`DOCENTE: ${docente}`)
+    const query1 = "SELECT * FROM Turmas WHERE sigla = ?"
+    db.all(query1, [sigla], (err, row) => {
+      if (row) {
+        return res.send("Essa nome de Turma já existe <a href='/addTurma'>Voltar</a>");
+      } else {
+        const query = 'INSERT INTO Turmas (sigla, docente, ativo) VALUES (?,?,1)';
+        db.get(query, [sigla, docente], (err, row) => {
+          if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
+          //1. Verificar se o usuário existe
+          res.redirect("/pagTurmas/1");
+        });
+      }
+    });
+  } else {
+    tituloError = "Não Permitido";
+    res.redirect("/nao-permitido");
+  }
+});
 
 app.get("/nao-permitido", (req, res) => {
   console.log("GET /nao-permitido");

@@ -43,7 +43,7 @@
       <tr>
           <td colspan="1" style="text-align: center;">
           <% if (pag > 1) {%>
-          <a href="/editItens/<%= Number(pag) - 1 %>">⬅</a>
+          <a href="/editItens/<%= idCampanha%>/<%= Number(pag) - 1 %>">⬅</a>
           <% } %>
           </td>
           <td colspan="2" style="text-align: center;">
@@ -53,7 +53,7 @@
           </td>
           <td colspan="1" style="text-align: center;">
           <% if (qtd_posts < dados.length) {%>
-          <a href="/edit/<%= Number(pag) + 1  %>">⮕</a>
+          <a href="/edit/<%= idCampanha%>/<%= Number(pag) + 1  %>">⮕</a>
           <% } %>
           </td>
       </tr>
