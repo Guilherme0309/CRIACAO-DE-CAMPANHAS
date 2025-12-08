@@ -407,7 +407,7 @@ app.get("/dashboard", (req, res) => {
 
 app.get("/selectCampanha", (req, res) => {
   console.log("GET /selectCampanha");
-  const query = "SELECT * From Campanhas";
+  const query = "SELECT * From Campanhas ORDER BY Ativo DESC";
 
   db.all(query, [], (err, row) => {
     if (err) throw err;
