@@ -52,7 +52,19 @@ app.get("/", (req, res) => {
 
 app.get("/login", (req, res) => {
   console.log("GET /login");
+
+  const query1 = `SELECT * FROM users`
+  db.get(query1, [], (err, row) => {
+    if (err) throw err;
+  
+    if(!row){
+      const query2 = `INSERT INTO users (username, password, ativo, tipo_perfil) VALUES ('Admin', 'admin123', 1, 'ADM');`
+      db.run(query2, [], (err, row) => {
+        if (err) throw err;
+      });
+    }
   res.render("pages/login", { titulo: "Login" });
+});
 });
 
 //Rota /login para processamento dos dados do formulário de LOGIN no cliente
@@ -132,7 +144,10 @@ app.get('/desativarUsuario/:id_username', (req, res) => {
     const id_userLogado = req.session.id_user;
 
     if (id_userLogado == id_username) {
-      res.send("Não é Possível Desativar seu Próprio Perfil <a href='/pagUsuarios/1'>Voltar</a>");
+      res.render("pages/mensagens", {
+        titulo: "NÃO É POSSÍVEL DESATIVAR O PERFIL ADMIN",
+        href: "/pagUsuarios/1"
+      });
     } else {
       const query = 'UPDATE users SET Ativo = 0 WHERE id = ?; '
       var pag = Math.ceil(id_username / 5);
@@ -186,14 +201,17 @@ app.post("/addUsuario", (req, res) => {
     console.log(`SENHA: ${password}`)
 
     const query1 = 'SELECT * FROM users WHERE username = ?';
-    db.get(query1, [username], (err, row) => {
+    db.get(query1, [username.trim()], (err, row) => {
       if (err) throw err;
       if (row) {
         console.log(row)
-        return res.send("Esse nome de usuário já existe <a href='/addUsuario'>Voltar</a>");
+        res.render("pages/mensagens", {
+          titulo: "ESSE NOME DE USUÁRIO JÁ EXISTE",
+          href: "/addUsuario"
+        })
       } else {
         const query2 = 'INSERT INTO users (username, password, ativo, tipo_perfil) VALUES (?,?,1,"USR")';
-        db.run(query2, [username, password], (err, row) => {
+        db.run(query2, [username.trim(), password.trim()], (err, row) => {
           if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
           //1. Verificar se o usuário existe
           res.redirect("/pagUsuarios/1");
@@ -283,12 +301,15 @@ app.post("/addTurma", (req, res) => {
     console.log(`SIGLA: ${sigla}`);
     console.log(`DOCENTE: ${docente}`)
     const query1 = "SELECT * FROM Turmas WHERE sigla = ?"
-    db.get(query1, [sigla], (err, row) => {
+    db.get(query1, [sigla.trim()], (err, row) => {
       if (row) {
-        return res.send("Essa nome de Turma já existe <a href='/addTurma'>Voltar</a>");
+        res.render("pages/mensagens", {
+          titulo: "ESSE NOME DE TURMA JÁ EXISTE",
+          href: "/addTurma"
+        })
       } else {
         const query = 'INSERT INTO Turmas (sigla, docente, ativo) VALUES (?,?,1)';
-        db.get(query, [sigla, docente], (err, row) => {
+        db.get(query, [sigla.trim(), docente.trim()], (err, row) => {
           if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
           //1. Verificar se o usuário existe
           res.redirect("/pagTurmas/1");
@@ -468,15 +489,19 @@ app.post("/novaCampanha", (req, res) => {
 
     const query1 = "SELECT * FROM Campanhas WHERE nome_Campanha = ?"
 
-    db.get(query1, [campanhaname], (err, row) => {
+    db.get(query1, [campanhaname.trim()], (err, row) => {
       if (err) throw err;
 
       if (row) {
-        res.send("Esse nome de campanha ja existe <a href='/novaCampanha'>Voltar</a>")
+        res.render("pages/mensagens", {
+          titulo: "ESSE NOME DE CAMPANHA JÁ EXISTE",
+          href: "/novaCampanha"
+        })
+        
       }
       else {
         const query2 = "INSERT INTO Campanhas (nome_Campanha, Ativo) VALUES (?, ?)"; //Insert do Nome da Campanha
-        db.run(query2, [campanhaname, ativo], function (err) {
+        db.run(query2, [campanhaname.trim(), ativo], function (err) {
           if (err) throw err;
           const id = this.lastID; // ID do registro recém-criado
 
@@ -498,7 +523,7 @@ app.post("/novaCampanha", (req, res) => {
           let query4 =
             "INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES";
           for (let i = 0; i < ItemName.length; i++) {
-            query4 += `( '${ItemName[i]}' , ${ItemPontos[i]}, ${id}, 1)`;
+            query4 += `( '${ItemName[i].trim()}' , ${ItemPontos[i]}, ${id}, 1)`;
             if (i < ItemName.length - 1) query4 += ", ";
           }
           console.log(query4);
@@ -594,7 +619,10 @@ app.get('/editItens/:id/:pag', (req, res) => {
           res.render('pages/editItens', { titulo: 'Editar Itens', req: req, pag: pag, idCampanha: idCampanha, dados: itens });
         });
       } else {
-        res.send(`Não é possível acessar essa página pois a campannha foi encerrada <a href='/pagInicialCampanha/${idCampanha}'> Voltar </a> `);
+        res.render("pages/mensagens", {
+          titulo: "NÃO É POSSÍVEL ACESSAR ESSA PÁGINA POIS A CAMPANHA FOI ENCERRADA",
+          href: `/pagInicialCampanha/${idCampanha}`
+        })
       }
     });
   } else {
@@ -616,8 +644,11 @@ app.get('/addItem/:id', (req, res) => {
       if (row.Ativo == 1) {
         res.render('pages/addItem', { titulo: 'Adicionar Item', req: req, idCampanha: idCampanha });
       } else {
-        res.send(`Não é possível acessar essa página pois a campannha foi encerrada <a href='/pagInicialCampanha/${idCampanha}'> Voltar </a> `);
-      }
+        res.render("pages/mensagens", {
+          titulo: "NÃO É POSSÍVEL ACESSAR ESSA PÁGINA POIS A CAMPANHA FOI ENCERRADA",
+          href: `/pagInicialCampanha/${idCampanha}`
+      });
+    }
     });
   } else {
     tituloError = "Não Permitido";
@@ -633,12 +664,15 @@ app.post('/addItem/:id', (req, res) => {
     console.log(`Descrição: ${descricao}`);
     console.log(`Pontos: ${DdlPontos}`);
     const query1 = 'SELECT * FROM Itens_Pontuacoes WHERE descricao = ? AND id_Campanha = ?'
-    db.all(query1, [descricao, idCampanha], (err, row) => {
+    db.all(query1, [descricao.trim(), idCampanha], (err, row) => {
       if (row) {
-        res.send(`Esse item ja existe <a href="/addItem/${idCampanha}">Voltar</a>`);
+        res.render("pages/mensagens", {
+          titulo: "ESSE ITEM JÁ EXISTE",
+          href: `/addItem/${idCampanha}`
+      });
       } else {
         const query2 = 'INSERT INTO Itens_Pontuacoes (Descricao, Pontos, id_Campanha, Ativo) VALUES (?,?,?,1)';
-        db.get(query2, [descricao, DdlPontos, idCampanha], (err, row) => {
+        db.get(query2, [descricao.trim(), DdlPontos, idCampanha], (err, row) => {
           if (err) throw err; //SE OCORRER O ERRO VÁ PARA O RESTO DO CÓDIGO
           //1. Verificar se o usuário existe
           res.redirect(`/editItens/1/${idCampanha}`);
@@ -672,7 +706,10 @@ app.get('/desativarItem/:idCampanha/:idItem', (req, res) => {
           res.redirect(`/editItens/${idCampanha}/${pag}`);
         });
       } else {
-        res.send(`Não é possível desativar itens pois a campanha foi encerrada <a href='/pagInicialCampanha/${idCampanha}'>Voltar</a>`);
+        res.render("pages/mensagens", {
+          titulo: "NÃO É POSSÍVEL DESATIVAR ITENS POIS A CAMPANHA FOI ENCERRADA",
+          href: `/pagInicialCampanha/${idCampanha}`
+        })
       }
     });
   } else {
@@ -702,7 +739,10 @@ app.get('/ReativarItem/:idCampanha/:idItem', (req, res) => {
           res.redirect(`/editItens/${idCampanha}/${pag}`);
         });
       } else {
-        res.send(`Não é possível reativar itens pois a campanha foi encerrada <a href='/pagInicialCampanha/${idCampanha}'>Voltar</a>`);
+        res.render("pages/mensagens", {
+          titulo: "NÃO É POSSÍVEL REATIVAR POIS A CAMPANHA FOI ENCERRADA",
+          href: `/pagInicialCampanha/${idCampanha}`
+        })
       }
     });
   } else {
@@ -743,7 +783,10 @@ app.get("/nova-doacao/:idCampanha", (req, res) => {
           });
         });
       } else {
-        res.send(`Não é possível fazer doações pois a campanha foi encerrada <a href='/pagInicialCampanha/${idCampanha}'>Voltar</a>`);
+        res.render("pages/mensagens", {
+          titulo: "NÃO É POSSÍVEL FAZER DOAÇÕES POIS A CAMPANHA FOI ENCERRADA",
+          href: `/pagInicialCampanha/${idCampanha}`
+        })
       }
     });
 

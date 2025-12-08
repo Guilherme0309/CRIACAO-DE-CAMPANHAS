@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html lang="ptbr">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
+<%- include('../partials/head'); %>
 
 <body class="container">
+  <%- include('../partials/menu'); %>
 
-    <header>
-        <%- include('../partials/menu'); %>      
-    </header>
+  <main>
+    <div>
+      <center>
+        <br><br>
+        <h1>Página não encontrada</h1>
+        <br>
+        <img src="/static/404.png">
+      </center>
+    </div>
+  </main>
 
-    <main>
-        <div>
-            <center>
-            <br><br>
-            <h1>Página não encontrada</h1>
-            <br>
-            <img src="/static/404.png">
-        </center>
-        </div>
-    </main>
-
-    <footer>
-        <%- include('../partials/footer'); %>
-    </footer>
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
 </body>
