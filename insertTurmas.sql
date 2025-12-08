@@ -35,3 +35,5 @@ DELETE FROM Campanhas WHERE id_Campanha = 4;
 UPDATE users SET Ativo = 1 WHERE id = 1;
 
 UPDATE Itens_Pontuacoes SET Descricao = 'Roupa de Cama' WHERE id = 6;
+
+SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma ORDER BY totalPontos DESC

@@ -1,16 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <%- include("../partials/head") %>
 
 <body>
-    <%- include("../partials/menu") %>
-<a href="/pagInicialADM"><img src="../../static/voltar.png" alt="Voltar" width="2.5%" style="margin: 10px;"></a>
-    <main>
-        
-    </main>
-    
-    <%- include("../partials/footer") %>
+  <%- include("../partials/menu") %>
+
+  <a href="/pagInicialADM">
+    <img src="../../static/voltar.png" alt="Voltar" width="2.5%" style="margin: 10px;">
+  </a>
+
+  <main id="MainDash">
+    <center>
+      <h1 style="font-size: 50px;">DASHBOARD</h1>
+      <br><br>
+
+      <h2>INFORMAÇÕES GERAIS</h2>
+      <table id="dashboardTable">
+        <thead>
+          <th>Campanhas Ativas</th>
+          <th>Total de Itens Doados (Geral)</th>
+          <th>Doações no Mês</th>
+        </thead>
+        <tr>
+          <td><%= campanhasAtivas %></td>
+          <td><%= totalItens %></td>
+          <td><%= doacoesMes %></td>
+        </tr>
+        <tfoot>
+          <tr>
+            <td colspan="3">
+              <br>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+      <table style="width:80%;">
+
+        <BR>
+        <h2>ITENS DOADOS POR CAMPANHA</h2>
+
+        <table id="dashboardTable">
+          <thead>
+            <th>Campanha</th>
+            <th>Total de Itens</th>
+          </thead>
+          <% itensPorCampanha.forEach(c => { %>
+          <tr>
+            <td><%= c.nome_Campanha %></td>
+            <td><%= c.Total_Itens %></td>
+          </tr>
+          <% }) %>
+          <tfoot>
+            <tr>
+              <td colspan="2">
+                <br>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+        <BR>
+        <h2>TURMAS QUE MAIS DOARAM</h2>
+
+        <table id="dashboardTable">
+          <thead>
+            <th>Posição</th>
+            <th>Turma</th>
+            <th>Total de Itens</th>
+          </thead>
+          <%  for (i = 0 ; i< 3; i++) {%>
+          <tr>
+            <td><%= i + 1 %>°</td>
+            <td><%= itensPorTurma[i].sigla %></td>
+            <td><%= itensPorTurma[i].Total_Itens %></td>
+          </tr>
+          <% } %>
+          <tfoot>
+            <tr>
+              <td colspan="3">
+                <br>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+    </center>
+  </main>
+
+  <%- include("../partials/footer") %>
 </body>
 
 </html>

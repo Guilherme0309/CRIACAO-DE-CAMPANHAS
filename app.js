@@ -283,7 +283,7 @@ app.post("/addTurma", (req, res) => {
     console.log(`SIGLA: ${sigla}`);
     console.log(`DOCENTE: ${docente}`)
     const query1 = "SELECT * FROM Turmas WHERE sigla = ?"
-    db.all(query1, [sigla], (err, row) => {
+    db.get(query1, [sigla], (err, row) => {
       if (row) {
         return res.send("Essa nome de Turma já existe <a href='/addTurma'>Voltar</a>");
       } else {
@@ -302,14 +302,87 @@ app.post("/addTurma", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  if (req.session.adm) {
-    console.log("GET /dashboard");
-    res.render("pages/dashboard", { titulo: "Dashboard Campanhas", req: req });
-  } else {
-    tituloError = "Não Permitido";
-    res.redirect("/nao-permitido");
+  if (!req.session.adm) {
+    return res.redirect("/nao-permitido");
   }
+
+  console.log("GET /dashboard");
+
+  const query1 = `
+    SELECT c.nome_Campanha, SUM(arc.qtd) AS Total_Itens
+    FROM Arrecadacoes arc 
+    INNER JOIN Campanhas c ON arc.id_campanha = c.id_Campanha
+    GROUP BY arc.id_Campanha
+  `;
+
+  db.all(query1, [], (err, row1) => {
+    if (err) throw err;
+    console.log("ITENS POR CAMPANHA: " + JSON.stringify(row1));
+
+    const query2 = `
+      SELECT t.sigla, SUM(arc.qtd) AS Total_Itens
+      FROM Arrecadacoes arc
+      INNER JOIN Turmas t ON arc.id_turma = t.id_turma
+      GROUP BY arc.id_turma
+      ORDER BY Total_Itens DESC
+    `;
+
+    db.all(query2, [], (err, row2) => {
+      if (err) throw err;
+      console.log("ITENS POR TURMA: " + JSON.stringify(row2));
+
+      const query3 = `
+        SELECT COUNT(*) AS campanhas_ativas 
+        FROM campanhas 
+        WHERE Ativo = 1
+      `;
+
+      db.all(query3, [], (err, row3) => {
+        if (err) throw err;
+        console.log("CAMPANHAS ATIVAS: " + JSON.stringify(row3));
+
+        const query4 = `
+          SELECT SUM(arc.qtd) AS Total_Itens
+          FROM Arrecadacoes arc
+          INNER JOIN Campanhas c ON arc.id_campanha = c.id_Campanha
+        `;
+
+        db.all(query4, [], (err, row4) => {
+          if (err) throw err;
+          console.log("TOTAL DE ITENS DOADOS: " + JSON.stringify(row4));
+
+          const hoje = new Date();
+          const numeroDoMes = hoje.getMonth() + 1; // Retorna 0 para janeiro, 1 para fevereiro, etc.
+          const numeroDoAno = hoje.getFullYear();
+          console.log("Mês: " + numeroDoMes);
+          console.log("Ano: " + numeroDoAno);
+
+          const query5 = `
+            SELECT SUM(qtd) AS Doacoes_Mes 
+            FROM Arrecadacoes 
+            WHERE data LIKE "%${numeroDoMes}/${numeroDoAno}"
+          `;
+
+          db.all(query5, [], (err, row5) => {
+            if (err) throw err;
+            console.log("TOTAL DE ITENS NO MÊS: " + JSON.stringify(row5));
+
+            res.render("pages/dashboard", {
+              titulo: "Dashboard Campanhas",
+              req: req,
+              itensPorCampanha: row1,
+              itensPorTurma: row2,
+              campanhasAtivas: row3[0].campanhas_ativas,
+              totalItens: row4[0].Total_Itens,
+              doacoesMes: row5[0].Doacoes_Mes
+            });
+          });
+        });
+      });
+    });
+  });
 });
+
 
 app.get("/selectCampanha", (req, res) => {
   console.log("GET /selectCampanha");
