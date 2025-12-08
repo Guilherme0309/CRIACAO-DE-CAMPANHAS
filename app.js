@@ -549,17 +549,24 @@ app.get("/tabGeral/:idCampanha/:pag", (req, res) => {
   const pag = req.params.pag;
   const query =
     "SELECT t.id_turma, t.sigla, t.docente, arc.qtd, ip.Pontos,COALESCE (Sum(arc.qtd * ip.Pontos), 0) AS totalPontos FROM Turmas t INNER JOIN Arrecadacoes arc ON arc.id_turma = t.id_turma INNER JOIN Itens_Pontuacoes ip ON ip.id = arc.id_Item WHERE arc.id_campanha = ? GROUP BY t.id_turma ORDER BY totalPontos DESC";
+  const query2 = "SELECT nome_Campanha FROM Campanhas WHERE id_Campanha = ?"
 
   db.all(query, [idCampanha], (err, row1) => {
     if (err) throw err;
     console.log("DADOS: ", JSON.stringify(row1));
-    res.render("pages/tabGeral", {
-      titulo: "Arrecadações",
-      idCampanha: idCampanha,
-      dados: row1,
-      req: req,
-      pag: pag,
-    });
+    db.get(query2, [idCampanha], (err,row2)=> {
+      if (err) throw err;
+      console.log(JSON.stringify(row2))
+      res.render("pages/tabGeral", {
+        titulo: "Arrecadações",
+        idCampanha: idCampanha,
+        dados: row1,
+        nomeCampanha: row2,
+        req: req,
+        pag: pag,
+      });
+
+    })
   });
 });
 
