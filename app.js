@@ -516,7 +516,7 @@ app.post("/novaCampanha", (req, res) => {
 
           console.log(query3);
 
-          db.run(query2, [], function (err) {
+          db.run(query3, [], function (err) {
             if (err) throw err;
           });
 
