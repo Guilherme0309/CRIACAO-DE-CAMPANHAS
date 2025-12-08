@@ -32,6 +32,9 @@
                     </td>
                     <td>
                         <div id="CheckedList" style="border:1px solid #ccc;height:150px;width:300px;overflow-y:scroll;padding:2px;">
+                            <input type="checkbox" id="checkboxGeral" checked="true" onclick="marcarTodos(this)">
+                            <label>Marcar/Desmarcar Todos</label>
+                            <br>
                             <% turmas.forEach(turma => { %>
                                 <input type="checkbox" id="Turmas" name="Turmas[]" value="<%= turma.id_turma %>" class="turma" checked="true">
                                 <label><%= turma.sigla %> - [<%= turma.docente %>]</label>
@@ -166,6 +169,16 @@ function verificacao(){
                 AddItem();
             }
         })
+
+        function marcarTodos(checkboxGeral) {
+    var checkboxes = document.getElementsByName('Turmas[]');
+    
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].type == 'checkbox') {
+            checkboxes[i].checked = checkboxGeral.checked;
+        }
+    }
+}
 
     </script>
 
